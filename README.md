@@ -1,0 +1,21 @@
+# stream-paper
+
+- Intro
+- Problem w/ functional representation
+- Solution
+  - `M (M a)`
+  - Functional Library
+- Optimization
+  - `M (Int -> M a)`
+- Evaluation
+  - Turbo?
+  - Filter?
+- Feldspar / DSL
+- Related Work
+  - FRP
+  - conduits
+  - pipes
+  - machines
+- Future Work
+  - switch is hard
+  - Pull / Push
