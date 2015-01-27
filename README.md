@@ -19,3 +19,9 @@
 - Future Work
   - switch is hard
   - Pull / Push
+
+```haskell
+loop  :: Pull1 o -> (i -> Pull1 o -> o) -> Seq i -> Seq o
+
+delay :: Pull1 a -> Seq a -> Seq [a]
+```
