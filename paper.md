@@ -10,7 +10,7 @@ abstract:
 
 # Introduction
 
-A popular functional stream reprsentation is a transition function
+A popular functional stream representation is a transition function
 from and old state to an element and a new state, together with a
 starting state:
 
