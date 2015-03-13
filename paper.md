@@ -50,6 +50,53 @@ filter.
 
 # A new representation for streams
 
+~~~ {.haskell}
+data Stream a = Stream (IO (IO a))
+~~~
+
+~~~ {.haskell}
+map :: (a -> b) -> Stream a -> Stream b
+map f (Stream init) = Stream $ do
+  next <- init
+  loop $ do
+    a <- next
+    return (f a)
+~~~
+
+~~~ {.haskell}
+pre :: a -> Stream a -> Stream a
+pre v (Stream init) = Stream $ do
+    next <- init
+    r <- newIORef v
+    loop $ do
+      a <- next
+      b <- readIORef r
+      writeIORef r a
+      return b
+~~~
+
+Infinite stream cannot be allocated to memory. But it is often useful
+to be able to allocate a prefix of them for storage and later
+processing. Below is the code for allocating 
+
+~~~ {.haskell}
+alloc :: Stream a -> Int -> IO (Array Int a)
+alloc (Stream init) len = do
+  arr  <- newArray_ (0,len-1)
+  next <- init
+  forM [0..len-1] $ \i -> do
+    a <- next
+    writeArray arr i a
+  freeze arr
+~~~
+
+The above code starts by allocating a mutable array of the appropriate
+size, followed by an initialization of the array. The initialization
+produces the `next` function which is used in the loop body to produce
+new elements in the stream which are successively stored in the array.
+When the loop is done, the mutable array is frozen, returning a
+immutable array as the final result.
+
 ## Relation to Functional Streams
 
 It turns out that the functional representation of streams can be
@@ -67,10 +114,20 @@ stream representation.
 ## Streams for EDSLs
 
 Our new monadic representation of streams is a natural fit for
-embedded domain specific languages and work particularly well with
-the technique of combining shallow and deep embeddings [@]. Monads can
-be embedded in an EDSL using the technique from [@genericmonads11].
+embedded domain specific languages and work particularly well with the
+technique of combining shallow and deep embeddings
+[@svenningsson2013combining]. Monads can be embedded in an EDSL using
+the technique from [@genericmonads11].  Embedding monads in this way
+has the advantage of applying the right monads laws need for fusion
+for free.
 
+The language Feldspar [@FeldsparIFL2010] has a stream library using a
+monadic embedding. The stream library is almost identical to the
+Haskell library presented in section \ref{}. In particular, the type
+of streams can be the same, except for using a different, embedded
+monad. The only difference for the programmer is that Feldspar
+requires some constraints on functions which allocate to memory, since
+not all Haskell types can be allocated in Feldspar.
 
 # Avoiding multiple loop variables
 
