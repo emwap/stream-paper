@@ -10,7 +10,7 @@ abstract:
 
 # Introduction
 
-A popular way of representing streams is as a transition function
+A popular functional stream reprsentation is a transition function
 from and old state to an element and a new state, together with a
 starting state:
 
@@ -18,8 +18,8 @@ starting state:
 data Stream a = forall s . Stream (s -> (a,s)) s
 ~~~
 
-The functional representation above has the advantage of being very
-expressive and can be compiled into efficient code by means of fusion.
+The representation is expressive and can be compiled into efficient
+code by means of fusion.
 
 Some application of streams, such as digital filters, rely on having a
 buffer containing previous elements of the stream.
@@ -30,7 +30,7 @@ of streams which allows for using imperative updates while retaining
 the advantages of the functional stream representation. Our
 contributions are:
 
-* A new streams representation, `M (M a)`, for some monad `M` which
+* A new stream representation, `M (M a)`, for some monad `M` which
   supports destructive update. The new representation, while relying
   on imperative features, can still be given a functional interface,
   just like the functional stream representation.
@@ -99,8 +99,8 @@ immutable array as the final result.
 
 ## Relation to Functional Streams
 
-It turns out that the functional representation of streams can be
-recovered from out new, monadic representation. It is an interesting
+The functional representation of streams can be
+recovered from our monadic representation. It is an interesting
 excercise because it sheds new light on the monadic represenation.
 Consider again the type `M (M a)`. The outer and the inner monads are
 the same. But they don't have to be. We could imagine a representation
