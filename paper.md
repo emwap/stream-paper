@@ -21,17 +21,22 @@ data Stream a = forall s . Stream (s -> (a,s)) s
 The representation is expressive and can be compiled into efficient
 code by means of fusion.
 
-Some application of streams, such as digital filters, rely on having a
-buffer containing previous elements of the stream.
-Using the functional stream representation means having to copy the
-whole buffer when computing a new element of the stream. Such copying
-is prohibitively expensive. This paper presents a new representation
-of streams which allows for using imperative updates while retaining
-the advantages of the functional stream representation. Our
-contributions are:
+Computing a simple moving average over a stream is done by keeping
+track of the most recent values from the stream with a sliding
+window. Computing a new result can be done by inserting a new value at
+the front of the window and removing an element from the back. The
+typical functional implementation of a sliding window requires the
+whole history except the last element to be copied to avoid aliasing
+problems. Copying the history is safe and conceptually simple but
+performance suffers. Even if performance is sufficient, copying data
+consumes more power and generates more heat.
+
+This paper presents a new representation of streams which allows for
+using in-place updates while retaining the advantages of the
+functional stream representation. Our contributions are:
 
 * A new stream representation, `M (M a)`, for some monad `M` which
-  supports destructive update. The new representation, while relying
+  supports in-place updates. The new representation, while relying
   on imperative features, can still be given a functional interface,
   just like the functional stream representation.
 
