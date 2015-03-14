@@ -104,8 +104,8 @@ the imperative features of the new monadic stream representation.
 ~~~ {.haskell}
 fir :: Array Int a -> Stream a -> Stream a
 fir b inp =
-    recurrenceIO (replicate1 (length b) 0) inp
-                 (scalarProd b)
+    recurrence (replicate (length b) 0) inp
+               (scalarProd b)
 
 recurrence :: Array Int a -> Stream a ->
               (Array Int a -> Array Int b -> b) ->
