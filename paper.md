@@ -125,15 +125,14 @@ recurrence ii (Stream init) mkExpr = Stream $ do
 
 ## Relation to Functional Streams
 
-The functional representation of streams can be
-recovered from our monadic representation. It is an interesting
-excercise because it sheds new light on the monadic represenation.
+The functional representation of streams can be recovered from our
+monadic representation to shed new light on the monadic represenation.
 Consider again the type `M (M a)`. The outer and the inner monads are
 the same. But they don't have to be. We could imagine a representation
-`M (N a)`. The monad `M` would be responsible for initializing
-memory while the monad `N` would be reading and writing that memory.
-If we forego mutation, we can let `M a` be `(a,s)` and `N a` be
-`(s -> (a,s))`. We recognize them as the writer monad and the state
+`M (N a)`. The monad `M` would be responsible for initializing memory
+while the monad `N` would be reading and writing that memory.  If we
+forego mutation, we can let `M a` be `(a,s)` and `N a` be `(s ->
+(a,s))`. We recognize them as the writer monad and the state
 monad. These two monads, when combined, results in the functional
 stream representation.
 
