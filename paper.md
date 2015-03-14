@@ -48,6 +48,7 @@ contributions are:
 Consider implementing an fir filter, a common example of a digital
 filter. 
 
+
 # A new representation for streams
 
 ~~~ {.haskell}
@@ -96,6 +97,31 @@ produces the `next` function which is used in the loop body to produce
 new elements in the stream which are successively stored in the array.
 When the loop is done, the mutable array is frozen, returning a
 immutable array as the final result.
+
+We are now in a position to implement an efficient fir filter using
+the imperative features of the new monadic stream representation.
+
+~~~ {.haskell}
+fir :: Array Int a -> Stream a -> Stream a
+fir b inp =
+    recurrenceIO (replicate1 (length b) 0) inp
+                 (scalarProd b)
+
+recurrence :: Array Int a -> Stream a ->
+              (Array Int a -> Array Int b -> b) ->
+              Stream b
+recurrence ii (Stream init) mkExpr = Stream $ do
+    next <- init
+    ibuf <- initBuffer ii
+    loop $ do
+      a <- next
+      when (lenI /= 0) $ putBuf ibuf a
+      b <- withBuf ibuf $ \ib ->
+             return $ mkExpr ib
+      return b
+  where
+    lenI = length ii
+~~~
 
 ## Relation to Functional Streams
 
