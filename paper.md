@@ -81,9 +81,11 @@ pre v (Stream init) = Stream $ do
       return b
 ~~~
 
-Infinite stream cannot be allocated to memory. But it is often useful
-to be able to allocate a prefix of them for storage and later
-processing. Below is the code for allocating 
+An infinite stream cannot be stored in memory. Saving a prefix of an
+infinite stream for later processing is often convenient. Below is the
+code for saving:
+
+TODO: Rename alloc.
 
 ~~~ {.haskell}
 alloc :: Stream a -> Int -> IO (Array Int a)
@@ -96,7 +98,7 @@ alloc (Stream init) len = do
   freeze arr
 ~~~
 
-The above code starts by allocating a mutable array of the appropriate
+The code starts by allocating a mutable array of the appropriate
 size, followed by an initialization of the array. The initialization
 produces the `next` function which is used in the loop body to produce
 new elements in the stream which are successively stored in the array.
