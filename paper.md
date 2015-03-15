@@ -163,6 +163,10 @@ not all Haskell types can be allocated in Feldspar.
 
 # Avoiding multiple loop variables
 
+~~~
+data Stream a = Stream (IO (Int -> IO a))
+~~~
+
 # Evaluation
 
 # Related work
