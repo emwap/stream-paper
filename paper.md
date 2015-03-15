@@ -142,7 +142,13 @@ recurrence ii (Stream init) mkExpr = Stream $ do
     lenI = length ii
 ~~~
 
-## Relation to Functional Streams
+# Avoiding multiple loop variables
+
+~~~
+data Stream a = Stream (IO (Int -> IO a))
+~~~
+
+# Relation to Functional Streams
 
 The functional representation of streams can be recovered from our
 monadic representation to shed new light on the monadic represenation.
@@ -155,7 +161,7 @@ forego mutation, we can let `M a` be `(a,s)` and `N a` be `(s ->
 monad. These two monads, when combined, results in the functional
 stream representation.
 
-## Streams for EDSLs
+# Streams for EDSLs
 
 Our new monadic representation of streams is a natural fit for
 embedded domain specific languages and work particularly well with the
@@ -172,12 +178,6 @@ of streams can be the same, except for using a different, embedded
 monad. The only difference for the programmer is that Feldspar
 requires some constraints on functions which allocate to memory, since
 not all Haskell types can be allocated in Feldspar.
-
-# Avoiding multiple loop variables
-
-~~~
-data Stream a = Stream (IO (Int -> IO a))
-~~~
 
 # Evaluation
 
