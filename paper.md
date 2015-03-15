@@ -107,7 +107,7 @@ remember len (Stream init) = do
     writeArray arr i a
   freeze arr
 ~~~
-
+a
 The code starts by allocating a mutable array of the appropriate
 size, followed by an initialization of the array. The initialization
 produces the `next` function which is used in the loop body to produce
@@ -158,19 +158,6 @@ hinder other optimizations to kick in.
 data Stream a = Stream (IO (Int -> IO a))
 ~~~
 
-# Relation to Functional Streams
-
-The functional representation of streams can be recovered from our
-monadic representation to shed new light on the monadic represenation.
-Consider again the type `M (M a)`. The outer and the inner monads are
-the same. But they don't have to be. We could imagine a representation
-`M (N a)`. The monad `M` would be responsible for initializing memory
-while the monad `N` would be reading and writing that memory.  If we
-forego mutation, we can let `M a` be `(a,s)` and `N a` be `(s ->
-(a,s))`. We recognize them as the writer monad and the state
-monad. These two monads, when combined, results in the functional
-stream representation.
-
 # Streams for EDSLs
 
 Our new monadic representation of streams is a natural fit for
@@ -190,6 +177,19 @@ requires some constraints on functions which allocate to memory, since
 not all Haskell types can be allocated in Feldspar.
 
 # Evaluation
+
+# Relation to Functional Streams
+
+The functional representation of streams can be recovered from our
+monadic representation to shed new light on the monadic represenation.
+Consider again the type `M (M a)`. The outer and the inner monads are
+the same. But they don't have to be. We could imagine a representation
+`M (N a)`. The monad `M` would be responsible for initializing memory
+while the monad `N` would be reading and writing that memory.  If we
+forego mutation, we can let `M a` be `(a,s)` and `N a` be `(s ->
+(a,s))`. We recognize them as the writer monad and the state
+monad. These two monads, when combined, results in the functional
+stream representation.
 
 # Related work
 
