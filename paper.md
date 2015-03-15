@@ -100,8 +100,8 @@ code for saving:
 TODO: Rename alloc.
 
 ~~~ {.haskell}
-alloc :: Stream a -> Int -> IO (Array Int a)
-alloc (Stream init) len = do
+alloc :: Int -> Stream a -> IO (Array Int a)
+alloc len (Stream init) = do
   arr  <- newArray_ (0,len-1)
   next <- init
   forM [0..len-1] $ \i -> do
@@ -144,7 +144,19 @@ recurrence ii (Stream init) mkExpr = Stream $ do
 
 # Avoiding multiple loop variables
 
+Consider the following function:
+
+~~~ {.haskell}
+foo arr = alloc n $ map (+1) $ cycle arr
 ~~~
+
+The generated code for this function will contain two loop indices,
+one originating from `cycle` and one from `alloc`. Although some
+compilers can remove multiple loop indices we would rather refrain
+from generating suboptimal code in the first place, as it can often
+hinder other optimizations to kick in.
+
+~~~ {.haskell}
 data Stream a = Stream (IO (Int -> IO a))
 ~~~
 
