@@ -4,7 +4,10 @@ title: Streams and stuff
 author: Grabbarna Grus
 abstract:
 
-  We have solved all the worlds problems
+  1. state the problem
+  2. say why it is interesting
+     Our representation allows code generation using in-place updates without spurious loop-indices.
+     The generated code is XXX% more efficient than the regular functional stream representation.
 
 ---
 
@@ -142,17 +145,25 @@ recurrence ii (Stream init) mkExpr = Stream $ do
 
 # Avoiding multiple loop variables
 
-Consider the following function:
+The stream representation already presented allows for in-place
+updates which improves efficiency of the generated code
+considerably. The generated code still suffers from a problem where
+fused functions will cause multiple loop indices to appear in the same
+loop. Consider the following function:
 
 ~~~ {.haskell}
 foo arr = remember n $ map (+1) $ cycle arr
 ~~~
 
 The generated code for this function will contain two loop indices,
-one originating from `cycle` and one from `remember`. Although some
-compilers can remove multiple loop indices we would rather refrain
-from generating suboptimal code in the first place, as it can often
-hinder other optimizations to kick in.
+one originating from `cycle` and one from `remember`. Good C compilers
+might remove multiple loop indices but relying on the C compiler to
+perform that optimization on signal processing applications is a
+risk. The mere presence of multiple loop indices might prevent earlier
+optimizations at the functional level from kicking in.
+
+Parameterising the stream representation with respect to the loop
+counter solves the problem:
 
 ~~~ {.haskell}
 data Stream a = Stream (IO (Int -> IO a))
