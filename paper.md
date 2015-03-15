@@ -81,6 +81,18 @@ pre v (Stream init) = Stream $ do
       return b
 ~~~
 
+
+~~~ {.haskell}
+cycle :: Array Int a -> Stream a
+cycle arr = Stream $ do
+  r <- newIORef 0
+  let l = length arr
+  loop $ do
+    i <- readIORef r
+    arr!(i `mod` l)
+    writeIORef r (i+1)
+~~~
+
 An infinite stream cannot be stored in memory. Saving a prefix of an
 infinite stream for later processing is often convenient. Below is the
 code for saving:
