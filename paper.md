@@ -97,11 +97,9 @@ An infinite stream cannot be stored in memory. Saving a prefix of an
 infinite stream for later processing is often convenient. Below is the
 code for saving:
 
-TODO: Rename alloc.
-
 ~~~ {.haskell}
-alloc :: Int -> Stream a -> IO (Array Int a)
-alloc len (Stream init) = do
+remember :: Int -> Stream a -> IO (Array Int a)
+remember len (Stream init) = do
   arr  <- newArray_ (0,len-1)
   next <- init
   forM [0..len-1] $ \i -> do
@@ -147,11 +145,11 @@ recurrence ii (Stream init) mkExpr = Stream $ do
 Consider the following function:
 
 ~~~ {.haskell}
-foo arr = alloc n $ map (+1) $ cycle arr
+foo arr = remember n $ map (+1) $ cycle arr
 ~~~
 
 The generated code for this function will contain two loop indices,
-one originating from `cycle` and one from `alloc`. Although some
+one originating from `cycle` and one from `remember`. Although some
 compilers can remove multiple loop indices we would rather refrain
 from generating suboptimal code in the first place, as it can often
 hinder other optimizations to kick in.
