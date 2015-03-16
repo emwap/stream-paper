@@ -169,12 +169,45 @@ perform that optimization on signal processing applications is a
 risk. The mere presence of multiple loop indices might prevent earlier
 optimizations at the functional level from kicking in.
 
-Parameterising the stream representation with respect to the loop
+Parameterising the stream representation with the loop
 counter solves the problem:
 
 ~~~ {.haskell}
 data Stream a = Stream (IO (Int -> IO a))
 ~~~
+
+The function performing allocation is responsible for providing the
+loop index. Here is the new version of `remember` for the new
+representation:
+
+~~~ {.haskell}
+remember :: Int -> Stream a -> IO (Array Int a)
+remember len (Stream init) = do
+  arr  <- newArray_ (0,len-1)
+  next <- init
+  forM [0..len-1] $ \i -> do
+    a <- next i
+    writeArray arr i a
+  freeze arr
+~~~
+
+The code is almost identical to the previous version, but the key
+difference is that the loop variable `i` is fed to the step function
+`next`.
+
+Functions like `cycle` can now take advantage of this loop index, and
+don't need to create their own loop variables:
+
+~~~ {.haskell}
+cycle :: Array Int a -> Stream a
+cycle arr = Stream $ do
+  let l = length arr
+  loop $ \i -> do
+    arr!(i `mod` l)
+~~~
+
+The new code for `cycle` is considerably shorter and will also
+generate better code.
 
 # Streams for EDSLs
 
