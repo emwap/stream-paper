@@ -217,10 +217,10 @@ withBuf    :: Buffer a -> (Array Int a -> b) -> IO b
 ~~~
 
 The function `initBuffer` creates a new buffer, `putBuf` adds a new
-element while discarding the oldest element. Using `withBuf` the
-programmer can get an immutable view of the current contents of the
-buffer in a local scope. The function `withBuf` can be implemented
-without copying but it requires that the programmer does not provide a
+element while discarding the oldest element. The programmer can get an
+immutable view of the current contents of the buffer in a local scope
+by using `withBuf`. The function `withBuf` can be implemented without
+copying but it requires that the programmer does not provide a
 function which returns the whole array.
 
 Returning to the function `recurrence`; the input stream stream is
@@ -234,7 +234,7 @@ input stream.
 
 The function `movingAvg` uses `recurrence` to provide sliding windows
 of the input stream and passes a function to compute the average of
-a window. The initial values of the window are set to zero.
+a window. The initial window only contains zeros.
 
 More complicated digital filters, like a fir filters, can be
 implemented in a similar fashion to the moving average:
