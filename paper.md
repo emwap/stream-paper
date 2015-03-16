@@ -236,7 +236,7 @@ The function `movingAvg` uses `recurrence` to provide sliding windows
 of the input stream and passes a function to compute the average of
 a window. The initial window only contains zeros.
 
-More complicated digital filters, like a fir filters, can be
+More advanced digital filters, like a fir filters, can be
 implemented in a similar fashion to the moving average:
 
 ~~~ {.haskell}
