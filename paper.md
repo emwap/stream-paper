@@ -292,9 +292,8 @@ remember len (Stream init) = do
   freeze arr
 ~~~
 
-The code is almost identical to the previous version, but the key
-difference is that the loop variable `i` is fed to the step function
-`next`.
+The key difference from the previous version is that the loop variable
+`i` is fed to the step function `next`.
 
 Functions like `cycle` can now take advantage of this loop index, and
 don't need to create their own loop variables:
@@ -309,6 +308,8 @@ cycle arr = Stream $ do
 
 The new code for `cycle` is considerably shorter and will also
 generate better code.
+
+TODO: Add example of better code.
 
 # Streams for EDSLs
 
