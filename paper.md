@@ -351,6 +351,22 @@ recognize them as the writer monad and the state monad. These two
 monads, when combined, results in the functional stream
 representation.
 
+# Finite Streams
+
+The monadic reprentation of streams does not only apply to infinite
+streams. It is also possible to use it for finite streams. The
+definition of finite stream is similar to infinite streams; they
+carry an extra length parameter, like so:
+
+~~~ {.haskell}
+data Stream a = Stream (IO (IO a)) Int
+~~~
+
+Most function definitions for finite stream are similar to those for
+infinite streams, with the addition of passing around the length
+parameter. Additionally, functions like appending two streams now make
+sense, and it is possible to allocate the whole stream to memory.
+
 # Related work
 
 * `data Stream a = Cons a (Stream a)`
