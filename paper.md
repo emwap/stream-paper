@@ -342,9 +342,8 @@ imagine a representation `M (N a)` where the outer monad `M` is
 responsible for initializing memory and the inner monad `N` is
 responsible for reading and writing that memory.  We can let `M a` be
 `(a,s)` and `N a` be `(s -> (a,s))` if we forego in-place updates. We
-recognize them as the writer monad and the state monad. These two
-monads, when combined, results in the functional stream
-representation.
+recognize them as the writer monad and the state monad. Combining
+these two monads results in the functional stream representation.
 
 # Related work
 
