@@ -108,13 +108,13 @@ It is straightforward to parameterize this representation on the
 particular choice of monad. We use the `IO` monad here for the sake of
 concreteness.
 
-Why does the representation have two levels of monads? It is indeed
-easy to convert something of type `IO (IO a)` to `IO a` by simply
-using `join`. The key to understanding this representation is that the
-outer monadic computation performs initialization and is only meant to
-be called once. It computes a new monadic computation corresponding to
-the inner monad, which is meant to be called many times, once for each
-element in the stream.
+Why does the representation have two levels of monads? We can convert
+something of type `IO (IO a)` to `IO a` by using `join`. The key to
+understanding this representation is that the outer monadic
+computation performs initialization and is only meant to be called
+once. The outer monad computes a new monadic computation corresponding
+to the inner monad, which is called once for each element in the
+stream.
 
 Our new monadic representation of streams can still be given an API
 which is functional in flavour and similar to what a programmer would
@@ -134,10 +134,9 @@ The new stream is initialized by running the initialization
 computation from the input stream, yielding the step function `next`.
 Then, in the new step function, the function `next` is run to produce
 an element `a` which transformed by the function `f` and then
-returned. The combinator `loop` is simply defined as `return`. We use
-that particular name because it conveys the intuition that the code
-before `loop` is run once as initialization while the code returned by
-`loop` is executed an indefinite number of times.
+returned. The combinator `loop` is defined as `return`. We use the
+name `loop` to convey that the code returned by `loop` is executed an
+indefinite number of times.
 
 ~~~ {.haskell}
 pre :: a -> Stream a -> Stream a
