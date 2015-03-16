@@ -253,11 +253,12 @@ for free.
 
 The language Feldspar [@FeldsparIFL2010] has a stream library using a
 monadic embedding. The stream library is almost identical to the
-Haskell library presented in section \ref{}. In particular, the type
-of streams can be the same, except for using a different, embedded
-monad. The only difference for the programmer is that Feldspar
-requires some constraints on functions which allocate to memory, since
-not all Haskell types can be allocated in Feldspar.
+Haskell library presented in section [A New Representation for
+Streams]. In particular, the type of streams can be the same, except
+for using a different, embedded monad. The only difference for the
+programmer is that Feldspar requires some constraints on functions
+which allocate to memory, since not all Haskell types can be allocated
+in Feldspar.
 
 # Evaluation
 
