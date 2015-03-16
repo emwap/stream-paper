@@ -204,8 +204,6 @@ recurrence ii (Stream init) mkExpr = Stream $ do
       b <- withBuf ibuf $ \ib ->
              return $ mkExpr ib
       return b
-  where
-    lenI = length ii
 ~~~
 
 The core functionality is exposed by the `recurrence` function. It
