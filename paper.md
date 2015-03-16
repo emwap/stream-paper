@@ -131,6 +131,15 @@ map f (Stream init) = Stream $ do
     return (f a)
 ~~~
 
+The new stream is initialized by running the initialization
+computation from the input stream, yielding the step function `next`.
+Then, in the new step function, the function `next` is run to produce
+an element `a` which transformed by the function `f` and then
+returned. The combinator `loop` is simply defined as `return`. We use
+that particular name because it conveys the intuition that the code
+before `loop` is run once as initialization while the code returned by
+`loop` is executed an indefinite number of times.
+
 ~~~ {.haskell}
 pre :: a -> Stream a -> Stream a
 pre v (Stream init) = Stream $ do
@@ -177,29 +186,70 @@ new elements in the stream which are successively stored in the array.
 When the loop is done, the mutable array is frozen, returning a
 immutable array as the final result.
 
-We are now in a position to implement an efficient fir filter using
+We are now in a position to write  an efficient moving average using
 the imperative features of the new monadic stream representation.
 
 ~~~ {.haskell}
-fir :: Array Int a -> Stream a -> Stream a
-fir b inp =
-    recurrence (replicate (length b) 0) inp
-               (scalarProd b)
+movingAvg :: Int -> Stream Double -> Stream Double
+movingAvg n str = recurrence (listArray (0,n-1) (replicate n 0.0)) str
+                   (\input -> sum (elems input) / n)
 
 recurrence :: Array Int a -> Stream a ->
-              (Array Int a -> Array Int b -> b) ->
+              (Array Int a -> b) ->
               Stream b
 recurrence ii (Stream init) mkExpr = Stream $ do
     next <- init
     ibuf <- initBuffer ii
     loop $ do
       a <- next
-      when (lenI /= 0) $ putBuf ibuf a
+      putBuf ibuf a
       b <- withBuf ibuf $ \ib ->
              return $ mkExpr ib
       return b
   where
     lenI = length ii
+~~~
+
+The core functionality is exposed by the `recurrence` function. It
+relies on a mutable cyclic buffer. We refrain from showing the whole
+buffer implementation, the operations we rely on have the following
+type signatures:
+
+~~~ {.haskell}
+initBuffer :: Array Int a -> IO (Buffer a)
+putBuf     :: Buffer a -> a -> IO ()
+withBuf    :: Buffer a -> (Array Int a -> b) -> IO b
+~~~
+
+The function `initBuffer` creates a new buffer, `putBuf` adds a new
+element while discarding the oldest element. Using `withBuf` the
+programmer can get an immutable view of the current contents of the
+buffer in a local scope. The function `withBuf` can be implemented
+without copying but it requires that the programmer does not provide a
+function which returns the whole array.
+
+Returning to the function `recurrence`; the input stream stream is
+initialized as is the cyclic buffer. For each element in the output
+stream an element from the input stream is computed and stored in the
+cyclic buffer. The content of the cyclic buffer is processed by
+a function provided by the caller of `recurrence` and the result is
+returned as the next element in the output stream. The resulting
+stream will contain values computed from a sliding window of the
+input stream.
+
+The function `movingAvg` uses `recurrence` to provide sliding windows
+of the input stream and passes a function to compute the average of
+a window. The initial values of the window are set to zero.
+
+More complicated digital filters, like a fir filters, can be
+implemented in a similar fashion to the moving average:
+
+~~~ {.haskell}
+fir :: Array Int a -> Stream a -> Stream a
+fir b inp =
+    recurrence (listArray (0,l-1) (replicate l 0)) inp
+               (scalarProd b)
+  where l = rangeSize (bounds b)
 ~~~
 
 # Avoiding multiple loop variables
