@@ -84,22 +84,21 @@ movingAvg n (Stream step init) = Stream step' init'
 ~~~
 
 This implementation is inefficient because the window needs to be
-copied each iteration, even if we assume that the operations `ixmap`
-and `\\` can be fused. It is possible to consider smarter
-representations of the window where copying can be avoided to some
-extent, but such representations tend to have a high constant overhead
-making them unsuitable for the small sizes of windows that are the
-common case.
+copied each iteration, even if the operations `ixmap` and `\\` are
+fused. Copying can be avoided to some extent by using smarter window
+representations. The smart representations tend to have a high
+constant overhead making them unsuitable for the common case of small
+window sizes.
 
 Similar problems appear for many applications of streams, such as
-digital fir and iir filters. What we would like is a representation
-of streams were we can use mutation to efficiently implement such
+digital fir and iir filters. What we would like is a representation of
+streams were we can use in-place updates to efficiently implement such
 functions.
 
 # A New Representation for Streams
 
 We present a new representation for streams which uses monads to
-enable mutation.
+enable in-place updates.
 
 ~~~ {.haskell}
 data Stream a = Stream (IO (IO a))
@@ -109,13 +108,13 @@ It is straightforward to parameterize this representation on the
 particular choice of monad. We use the `IO` monad here for the sake of
 concreteness.
 
-Why does the representation have two levels of monads? It is indeed
-easy to convert something of type `IO (IO a)` to `IO a` by simply
-using `join`. The key to understanding this representation is that the
-outer monadic computation performs initialization and is only meant to
-be called once. It computes a new monadic computation corresponding to
-the inner monad, which is meant to be called many times, once for each
-element in the stream.
+Why does the representation have two levels of monads? We can convert
+something of type `IO (IO a)` to `IO a` by using `join`. The key to
+understanding this representation is that the outer monadic
+computation performs initialization and is only meant to be called
+once. The outer monad computes a new monadic computation corresponding
+to the inner monad, which is called once for each element in the
+stream.
 
 Our new monadic representation of streams can still be given an API
 which is functional in flavour and similar to what a programmer would
@@ -135,10 +134,9 @@ The new stream is initialized by running the initialization
 computation from the input stream, yielding the step function `next`.
 Then, in the new step function, the function `next` is run to produce
 an element `a` which transformed by the function `f` and then
-returned. The combinator `loop` is simply defined as `return`. We use
-that particular name because it conveys the intuition that the code
-before `loop` is run once as initialization while the code returned by
-`loop` is executed an indefinite number of times.
+returned. The combinator `loop` is defined as `return`. We use the
+name `loop` to convey that the code returned by `loop` is executed an
+indefinite number of times.
 
 There are various ways of creating streams, below we show the function
 `cycle` which cycles through the elements of an array. A particular
@@ -198,14 +196,11 @@ recurrence ii (Stream init) mkExpr = Stream $ do
       b <- withBuf ibuf $ \ib ->
              return $ mkExpr ib
       return b
-  where
-    lenI = length ii
 ~~~
 
-The core functionality is exposed by the `recurrence` function. It
-relies on a mutable cyclic buffer. We refrain from showing the whole
-buffer implementation, the operations we rely on have the following
-type signatures:
+The core functionality is exposed by the `recurrence` function which
+uses a mutable cyclic buffer. The type signatures for the
+operations we rely on are:
 
 ~~~ {.haskell}
 initBuffer :: Array Int a -> IO (Buffer a)
@@ -214,10 +209,10 @@ withBuf    :: Buffer a -> (Array Int a -> b) -> IO b
 ~~~
 
 The function `initBuffer` creates a new buffer, `putBuf` adds a new
-element while discarding the oldest element. Using `withBuf` the
-programmer can get an immutable view of the current contents of the
-buffer in a local scope. The function `withBuf` can be implemented
-without copying but it requires that the programmer does not provide a
+element while discarding the oldest element. The programmer can get an
+immutable view of the current contents of the buffer in a local scope
+by using `withBuf`. The function `withBuf` can be implemented without
+copying but it requires that the programmer does not provide a
 function which returns the whole array.
 
 Returning to the function `recurrence`; the input stream stream is
@@ -231,9 +226,9 @@ input stream.
 
 The function `movingAvg` uses `recurrence` to provide sliding windows
 of the input stream and passes a function to compute the average of
-a window. The initial values of the window are set to zero.
+a window. The initial window only contains zeros.
 
-More complicated digital filters, like a fir filters, can be
+More advanced digital filters, like a fir filters, can be
 implemented in a similar fashion to the moving average:
 
 ~~~ {.haskell}
@@ -289,9 +284,8 @@ remember len (Stream init) = do
   freeze arr
 ~~~
 
-The code is almost identical to the previous version, but the key
-difference is that the loop variable `i` is fed to the step function
-`next`.
+The key difference from the previous version is that the loop variable
+`i` is fed to the step function `next`.
 
 Functions like `cycle` can now take advantage of the provided loop
 index, and don't need to create their own loop variables:
@@ -307,24 +301,25 @@ cycle arr = Stream $ do
 The new code for `cycle` is considerably shorter and will also
 generate better code.
 
+TODO: Add example of better code.
+
 # Streams for EDSLs
 
 Our new monadic representation of streams is a natural fit for
 embedded domain specific languages and work particularly well with the
 technique of combining shallow and deep embeddings
 [@svenningsson2013combining]. Monads can be embedded in an EDSL using
-the technique from [@genericmonads11].  Embedding monads in this way
-has the advantage of applying the right monads laws need for fusion
-for free.
+the technique by [@genericmonads11]. Embedding monads in this way
+gives fusion for free since the host language applies the right monads
+laws automatically.
 
-The language Feldspar [@FeldsparIFL2010] has a stream library using a
+Feldspar [@FeldsparIFL2010] has a stream library using a
 monadic embedding. The stream library is almost identical to the
-Haskell library presented in section [A New Representation for
-Streams]. In particular, the type of streams can be the same, except
-for using a different, embedded monad. The only difference for the
-programmer is that Feldspar requires some constraints on functions
-which allocate to memory, since not all Haskell types can be allocated
-in Feldspar.
+Haskell library presented in Section [A New Representation for
+Streams]. The stream type is the same except using a different
+embedded monad. The only difference for the programmer is that
+Feldspar requires some constraints on functions which allocate to
+memory, since not all Haskell types can be allocated in Feldspar.
 
 # Evaluation
 
@@ -338,10 +333,9 @@ necessary functionality is provided by the respective monads. We could
 imagine a representation `M (N a)` where the outer monad `M` is
 responsible for initializing memory and the inner monad `N` is
 responsible for reading and writing that memory.  We can let `M a` be
-`(a,s)` and `N a` be `(s -> (a,s))` if we forego mutation. We
-recognize them as the writer monad and the state monad. These two
-monads, when combined, results in the functional stream
-representation.
+`(a,s)` and `N a` be `(s -> (a,s))` if we forego in-place updates. We
+recognize them as the writer monad and the state monad. Combining
+these two monads results in the functional stream representation.
 
 # Finite Streams
 
