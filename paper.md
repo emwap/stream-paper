@@ -279,11 +279,15 @@ representation.
 
 # Related work
 
-## FRP
+* `data Stream a = Cons a (Stream a)`
 
-## Conduits and pipes
+* FRP
 
-## Machines
+* Conduits and pipes
+
+* Machines
+
+* Stream fusion
 
 ## Future Work
 
