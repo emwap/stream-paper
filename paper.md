@@ -1,7 +1,14 @@
 ---
 documentclass: 'llncs'
 title: Streams and stuff
-author: Grabbarna Grus
+author:
+ - Josef Svenningsson\inst{1}
+ - Emil Axelsson\inst{1}
+ - Anders Persson\inst{1}
+ - Peter Jonsson\inst{2}
+institute:
+ - Chalmers University of Technology
+ - Swedish Institute of Computer Science
 abstract:
 
   1. state the problem
