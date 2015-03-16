@@ -140,18 +140,10 @@ that particular name because it conveys the intuition that the code
 before `loop` is run once as initialization while the code returned by
 `loop` is executed an indefinite number of times.
 
-~~~ {.haskell}
-pre :: a -> Stream a -> Stream a
-pre v (Stream init) = Stream $ do
-    next <- init
-    r <- newIORef v
-    loop $ do
-      a <- next
-      b <- readIORef r
-      writeIORef r a
-      return b
-~~~
-
+There are various ways of creating streams, below we show the function
+`cycle` which cycles through the elements of an array. A particular
+aspect of this function is that it has to create a reference which is
+used to keep track of what element in the array to read from.
 
 ~~~ {.haskell}
 cycle :: Array Int a -> Stream a
