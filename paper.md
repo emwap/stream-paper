@@ -98,9 +98,29 @@ functions.
 
 # A New Representation for Streams
 
+We present a new representation for streams which uses monads to
+enable mutation.
+
 ~~~ {.haskell}
 data Stream a = Stream (IO (IO a))
 ~~~
+
+It is straightforward to parameterize this representation on the
+particular choice of monad. We use the `IO` monad here for the sake of
+concreteness.
+
+Why does the representation have two levels of monads? It is indeed
+easy to convert something of type `IO (IO a)` to `IO a` by simply
+using `join`. The key to understanding this representation is that the
+outer monadic computation performs initialization and is only meant to
+be called once. It computes a new monadic computation corresponding to
+the inner monad, which is meant to be called many times, once for each
+element in the stream.
+
+Our new monadic representation of streams can still be given an API
+which is functional in flavour and similar to what a programmer would
+expect from a functional representation. As an initial example
+consider the `map` function:
 
 ~~~ {.haskell}
 map :: (a -> b) -> Stream a -> Stream b
