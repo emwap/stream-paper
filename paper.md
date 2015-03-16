@@ -339,10 +339,8 @@ these two monads results in the functional stream representation.
 
 # Finite Streams
 
-The monadic reprentation of streams does not only apply to infinite
-streams. It is also possible to use it for finite streams. The
-definition of finite stream is similar to infinite streams; they
-carry an extra length parameter, like so:
+Finite streams can also be represented by adding an extra length
+parameter to our monadic representation:
 
 ~~~ {.haskell}
 data Stream a = Stream (IO (IO a)) Int
