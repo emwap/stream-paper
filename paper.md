@@ -24,22 +24,23 @@ A popular functional stream representation is a transition function
 from and old state to an element and a new state, together with a
 starting state:
 
-~~~ .haskell
+~~~ {.haskell}
 data Stream a = forall s . Stream (s -> (a,s)) s
 ~~~
 
 The representation is expressive and can be compiled into efficient
 code by means of fusion.
 
-Computing a simple moving average over a stream is done by keeping
-track of the most recent values from the stream with a sliding
-window. Computing a new result can be done by inserting a new value at
-the front of the window and removing an element from the back. The
-typical functional implementation of a sliding window requires the
-whole history except the last element to be copied to avoid aliasing
-problems. Copying the history is safe and conceptually simple but
-performance suffers. Even if performance is sufficient, copying data
-consumes more power and generates more heat.
+Consider computing a simple moving average over a stream using the
+above representation. The implementation would keep track of the most
+recent values from the stream with a sliding window. Computing a new
+result can be done by inserting a new value at the front of the window
+and removing an element from the back. The typical functional
+implementation of a sliding window requires the whole history except
+the last element to be copied to avoid aliasing problems. Copying the
+history is safe and conceptually simple but performance suffers. Even
+if performance is sufficient, copying data consumes more power and
+generates more heat.
 
 This paper presents a new representation of streams which allows for
 using in-place updates while retaining the advantages of the
