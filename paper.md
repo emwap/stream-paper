@@ -91,14 +91,14 @@ constant overhead making them unsuitable for the common case of small
 window sizes.
 
 Similar problems appear for many applications of streams, such as
-digital fir and iir filters. What we would like is a representation
-of streams were we can use mutation to efficiently implement such
+digital fir and iir filters. What we would like is a representation of
+streams were we can use in-place updates to efficiently implement such
 functions.
 
 # A New Representation for Streams
 
 We present a new representation for streams which uses monads to
-enable mutation.
+enable in-place updates.
 
 ~~~ {.haskell}
 data Stream a = Stream (IO (IO a))
@@ -345,7 +345,7 @@ necessary functionality is provided by the respective monads. We could
 imagine a representation `M (N a)` where the outer monad `M` is
 responsible for initializing memory and the inner monad `N` is
 responsible for reading and writing that memory.  We can let `M a` be
-`(a,s)` and `N a` be `(s -> (a,s))` if we forego mutation. We
+`(a,s)` and `N a` be `(s -> (a,s))` if we forego in-place updates. We
 recognize them as the writer monad and the state monad. These two
 monads, when combined, results in the functional stream
 representation.
