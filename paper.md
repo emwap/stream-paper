@@ -309,7 +309,7 @@ Our new monadic representation of streams is a natural fit for
 embedded domain specific languages and work particularly well with the
 technique of combining shallow and deep embeddings
 [@svenningsson2013combining]. Monads can be embedded in an EDSL using
-the technique by [@genericmonads11]. Embedding monads in this way
+the technique by @genericmonads11. Embedding monads in this way
 gives fusion for free since the host language applies the right monads
 laws automatically.
 
