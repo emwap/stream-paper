@@ -117,7 +117,7 @@ remember len (Stream init) = do
     writeArray arr i a
   freeze arr
 ~~~
-a
+
 The code starts by allocating a mutable array of the appropriate
 size, followed by an initialization of the array. The initialization
 produces the `next` function which is used in the loop body to produce
