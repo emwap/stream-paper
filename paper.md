@@ -252,6 +252,10 @@ fir b inp =
   where l = rangeSize (bounds b)
 ~~~
 
+Implementing iir filters requires a somewhat more sophisticated
+version of `recurrence` which also has a cyclic buffer for the
+elements of the output stream.
+
 # Avoiding multiple loop variables
 
 The stream representation already presented allows for in-place
