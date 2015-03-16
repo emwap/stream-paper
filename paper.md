@@ -61,11 +61,42 @@ functional stream representation. Our contributions are:
 
 # The problem
 
-Consider implementing an fir filter, a common example of a digital
-filter. 
+Consider again the functional stream representation from the
+introduction.
 
+~~~ {.haskell}
+data Stream a = forall s. Stream (s -> (a,s)) s
+~~~
 
-# A new representation for streams
+Implementing an algorithm such as the moving average using the above
+representation can look as follows:
+
+~~~ {.haskell}
+movingAvg n (Stream step init) = Stream step' init'
+  where
+    init' = (init, listArray (0,n-1) replicate n 0)
+    step' (s,window) =
+      let (s',a)  = step s
+          window' = ixmap (0,n) (\i -> i+1 `mod` n) window 
+                 // [(n-1,a)]
+      in (avg window, (s',window'))
+    avg w = sum (elems w) / n
+~~~
+
+This implementation is inefficient because the window needs to be
+copied each iteration, even if we assume that the operations `ixmap`
+and `\\` can be fused. It is possible to consider smarter
+representations of the window where copying can be avoided to some
+extent, but such representations tend to have a high constant overhead
+making them unsuitable for the small sizes of windows that are the
+common case.
+
+Similar problems appear for many applications of streams, such as
+digital fir and iir filters. What we would like is a representation
+of streams were we can use mutation to efficiently implement such
+functions.
+
+# A New Representation for Streams
 
 ~~~ {.haskell}
 data Stream a = Stream (IO (IO a))
