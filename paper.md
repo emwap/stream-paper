@@ -367,3 +367,4 @@ sense, and it is possible to allocate the whole stream to memory.
 
 ## Future Work
 
+# References
