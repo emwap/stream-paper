@@ -5,10 +5,10 @@ author:
  - Josef Svenningsson\inst{1}
  - Emil Axelsson\inst{1}
  - Anders Persson\inst{1}
- - Peter Jonsson\inst{2}
+ - Peter A. Jonsson\inst{2}
 institute:
  - Chalmers University of Technology
- - Swedish Institute of Computer Science
+ - SICS Swedish ICT AB
 abstract:
 
   1. state the problem
