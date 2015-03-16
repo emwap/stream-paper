@@ -301,15 +301,15 @@ The code is almost identical to the previous version, but the key
 difference is that the loop variable `i` is fed to the step function
 `next`.
 
-Functions like `cycle` can now take advantage of this loop index, and
-don't need to create their own loop variables:
+Functions like `cycle` can now take advantage of the provided loop
+index, and don't need to create their own loop variables:
 
 ~~~ {.haskell}
 cycle :: Array Int a -> Stream a
 cycle arr = Stream $ do
   let l = length arr
   loop $ \i -> do
-    arr!(i `mod` l)
+    return (arr!(i `mod` l))
 ~~~
 
 The new code for `cycle` is considerably shorter and will also
