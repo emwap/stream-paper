@@ -34,7 +34,7 @@ code by means of fusion.
 Consider computing a simple moving average over a stream using the
 above representation. The implementation would keep track of the most
 recent values from the stream with a sliding window. Computing a new
-involves inserting a new value at the front of the window
+result involves inserting a new value at the front of the window
 and removing an element from the back. The typical functional
 implementation of a sliding window requires the whole history except
 the last element to be copied to avoid aliasing problems. Copying the
