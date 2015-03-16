@@ -84,12 +84,11 @@ movingAvg n (Stream step init) = Stream step' init'
 ~~~
 
 This implementation is inefficient because the window needs to be
-copied each iteration, even if we assume that the operations `ixmap`
-and `\\` can be fused. It is possible to consider smarter
-representations of the window where copying can be avoided to some
-extent, but such representations tend to have a high constant overhead
-making them unsuitable for the small sizes of windows that are the
-common case.
+copied each iteration, even if the operations `ixmap` and `\\` are
+fused. Copying can be avoided to some extent by using smarter window
+representations. The smart representations tend to have a high
+constant overhead making them unsuitable for the common case of small
+window sizes.
 
 Similar problems appear for many applications of streams, such as
 digital fir and iir filters. What we would like is a representation
