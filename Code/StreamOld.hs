@@ -10,19 +10,18 @@ import Feldspar.Compiler
 
 data Stream a = forall s . Syntax s => Stream (s -> (a,s)) s
 
-(+++) :: (Type a) => Pull1 a -> Pull1 a -> Pull1 a
-v1 +++ v2 = indexed1 (length v1 + length v2) $ \i ->
-              condition (i < length v1) (v1!:(Z:.i)) (v2!:(Z:.(i-length v1)))
+singleton :: Data a -> Pull1 a
+singleton a = indexed1 1 (const a)
 
 recurrenceI :: (Type a, Type b)
             => Pull1 a -> Stream (Data a) ->
                (Pull1 a -> Data b) ->
                Stream (Data b)
 recurrenceI ii (Stream step init) mkExpr = Stream step' init'
-  where init' = (init,ii)
+  where init' = (init,store ii)
         step' (s,ii) = let (a,s') = step s
-                           ii' = Feldspar.Vector.take (lenI - 1) ii +++ indexed1 1 (const a)
-                           b = mkExpr ii'
+                           ii' = store $ singleton a ++ Feldspar.Vector.take (lenI - 1) ii
+                           b = mkExpr (toPull ii')
                            lenI = length ii
                        in (b,(s',ii'))
 
@@ -32,11 +31,11 @@ recurrenceIO :: (Type a, Type b)
                 (Pull1 a -> Pull1 b -> Data b) ->
                 Stream (Data b)
 recurrenceIO ii (Stream step init) io mkExpr = Stream step' init'
-  where init' = (init,ii,io)
+  where init' = (init,store ii,store io)
         step' (s,ii,io) = let (a,s') = step s
-                              ii' = Feldspar.Vector.take (lenI - 1) ii +++ indexed1 1 (const a)
-                              io' = Feldspar.Vector.take (lenO - 1) io +++ indexed1 1 (const b)
-                              b = mkExpr ii' io
+                              ii' = store $ singleton a ++ Feldspar.Vector.take (lenI - 1) ii
+                              io' = store $ singleton b ++ Feldspar.Vector.take (lenO - 1) io
+                              b = mkExpr (toPull ii') (toPull io)
                               lenI = length ii
                               lenO = length io
                           in (b,(s',ii',io'))
@@ -57,6 +56,8 @@ streamAsVector :: (Type b)
                   (Pull1 a -> Pull1 b)
 streamAsVector f vec = thawPull1 $ StreamOld.take (length vec) $
                        f (Stream (\i -> (vec!:(Z:.i),i+1)) 0)
+-- streamAsVector f vec = toPull $ arrToManifest (fromList [length vec], StreamOld.take (length vec) $
+--                        f (Stream (\i -> (vec!:(Z:.i),i+1)) 0))
 
 -- | A fir filter on streams
 fir :: Numeric a => Pull1 a ->
