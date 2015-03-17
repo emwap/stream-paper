@@ -78,15 +78,16 @@ Implementing an algorithm such as the moving average using the above
 representation can look as follows:
 
 ~~~ {.haskell}
+movingAvg :: Fractional a => Int -> Stream a -> Stream a
 movingAvg n (Stream step init) = Stream step' init'
   where
-    init' = (init, listArray (0,n-1) replicate n 0)
+    init' = (init, listArray (0,n-1) (replicate n 0))
     step' (s,window) =
-      let (s',a)  = step s
+      let (a,s')  = step s
           window' = ixmap (0,n) (\i -> i+1 `mod` n) window
                  // [(n-1,a)]
       in (avg window, (s',window'))
-    avg w = sum (elems w) / n
+    avg w = sum (elems w) / fromIntegral n
 ~~~
 
 This implementation is inefficient because the window needs to be
