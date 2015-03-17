@@ -367,7 +367,7 @@ sense, and it is possible to allocate the whole stream to memory.
 
 # Related Work
 
-\paragraph{Lazy streams}
+\paragraph{\bf Lazy streams}
 Streams can be represented succinctly in lazy languages like Haskell
 with the following definition:
 
@@ -394,14 +394,24 @@ usable even in an EDSL context.
 
 TODO Recursive definitions are also problematic for fusion, no?
 
-\paragraph{Stream fusion}
+\paragraph{\bf Co-Iterative streams} [@Caspi19981], [@coutts2007stream]
 
-\paragraph{Conduits, Pipes, etc.}
+Stream fusion:
+
+~~~ {.haskell}
+data Stream a = forall s . Stream (s -> Step a s) s
+~~~
+
+* Similar to our initial `Stream` type
+* Possibly finite
+* No mutable state
+
+\paragraph{\bf Conduits, Pipes, etc.}
 There are many Haskell libraries for dealing with streaming data, such as Conduit [@conduit-overview] and Pipes [@pipes]. Most of these libraries define streams over an underlying monad. Typically, the underlying monad is the `IO` monad, which then allows for the streaming programs to perform external communication. However, there is nothing stopping from using the `IO` monad also for "internal" effects, such as mutable state.
 
 Stream representations such as the one in Conduits can describe more general networks than our `Stream` type (e.g. nodes with different input and output rates). However, being based on recursive definitions, those stream programs are generally not guaranteed to fuse. Though, when certain requirements are met, conduits are subject to fusion [@conduit-fusion].
 
-The fusion framework in Conduits relies on GHC rules to rewrite recursive stream programs to corresponding programs based on a non-recursive stream type:
+The fusion framework in Conduits relies on GHC rules to rewrite recursive stream programs to corresponding programs based on a non-recursive stream type (extension of the stream fusion representation above):
 
 ~~~ {.haskell}
 data Stream m o r = forall s . Stream (s -> m (Step s o r)) (m s)
@@ -409,11 +419,13 @@ data Stream m o r = forall s . Stream (s -> m (Step s o r)) (m s)
 
 This type is quite close to our `Stream` representation: the initialization action `m s` can be used to initialize mutable state, and the step function can be used to mutate this state. The main difference is that there is still immutable state passed around (of type `s`), which is unnecessary if we put all the state in the monad.
 
-\paragraph{Machines}
+\paragraph{\bf Machines}
 
-\paragraph{Vector} (has an implementation of finite (monadic) streams)
+\paragraph{\bf Vector} (has an implementation of finite (monadic) streams)
 
-\paragraph{FRP}
+\paragraph{\bf FRP}
+
+  <!-- TODO Maybe remove the \bf above if it looks good in the style. -->
 
 ## Future Work
 
