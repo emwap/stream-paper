@@ -111,9 +111,9 @@ concreteness.
 Why does the representation have two levels of monads? The key to
 understanding this representation is that the outer monadic
 computation performs initialization and is only meant to be called
-once. The outer monad computes a new monadic computation corresponding
-to the inner monad, which is called once for each element in the
-stream.
+once. The outer monadic computation returns a new monadic
+computation of type `M a`. This inner computation is called once for
+each element in the stream.
 
 Our new monadic representation of streams can still be given an API
 which is functional in flavour and similar to what a programmer would
@@ -227,7 +227,7 @@ The function `movingAvg` uses `recurrence` to provide sliding windows
 of the input stream and passes a function to compute the average of
 a window. The initial window only contains zeros.
 
-More advanced digital filters, like a fir filters, can be
+More advanced digital filters, like fir filters, can be
 implemented in a similar fashion to the moving average:
 
 ~~~ {.haskell}
@@ -491,7 +491,8 @@ are problematic in the context of code generating EDSLs. The monadic
 formulation of streams we have presented has the advantage of being
 usable even in an EDSL context.
 
-\paragraph{\bf Co-Iterative streams} [@Caspi19981], [@coutts2007stream]
+\paragraph{\bf Co-Iterative streams}
+[@Caspi19981], [@coutts2007stream]
 
 Stream fusion:
 
@@ -504,11 +505,11 @@ data Stream a = forall s . Stream (s -> Step a s) s
 * No mutable state
 
 \paragraph{\bf Conduits, Pipes, etc.}
-There are many Haskell libraries for dealing with streaming data, such as Conduit [@conduit-overview], Pipes [@pipes] and Iteratees [@kiselyov2012iteratees]. Most of these libraries define streams over an underlying monad. Typically, the underlying monad is the `IO` monad, which then allows for the streaming programs to perform external communication. However, there is nothing stopping from using the `IO` monad also for "internal" effects, such as mutable state.
+There are many Haskell libraries for dealing with streaming data, such as Conduit [@conduit-overview], Pipes [@pipes] and Iteratees [@kiselyov2012iteratees]. Most of these libraries define streams over an underlying monad. Choosing `IO` as the underlying monad allows for the streaming programs to perform external communication. However, there is nothing stopping from using the `IO` monad also for "internal" effects, such as mutable state.
 
 Stream representations such as the one in Conduits can describe more general networks than our `Stream` type (e.g. nodes with different input and output rates). However, being based on recursive definitions, those stream programs are generally not guaranteed to fuse. Though, when certain requirements are met, conduits are subject to fusion [@conduit-fusion].
 
-The fusion framework in Conduits relies on GHC rules to rewrite recursive stream programs to corresponding programs based on a non-recursive stream type (extension of the stream fusion representation above):
+The fusion framework in Conduits relies on GHC rules to rewrite recursive stream programs to corresponding programs based on a non-recursive stream type (an extension of the stream fusion representation above):
 
 ~~~ {.haskell}
 data Stream m o r = forall s . Stream (s -> m (Step s o r)) (m s)
