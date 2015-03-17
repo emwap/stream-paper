@@ -419,19 +419,19 @@ generate better code.
 # Streams for EDSLs
 
 Our new monadic representation of streams is a natural fit for
-embedded domain specific languages and work particularly well with the
+embedded domain specific languages and works particularly well with the
 technique of combining shallow and deep embeddings
 [@svenningsson2013combining]. Monads can be embedded in an EDSL using
 the technique by @genericmonads11. Embedding monads in this way
 gives fusion for free since the host language applies the right monads
 laws automatically.
 
-Feldspar [@FeldsparIFL2010] has a stream library using a monadic
+Feldspar [@FeldsparIFL2010] has a stream library that uses a monadic
 embedding. The stream library is almost identical to the Haskell
 library presented in Section [Efficient Monadic Streams]. The stream
 type is the same except using a different embedded monad. The only
 difference for the programmer is that Feldspar requires some
-constraints on functions which allocate to memory, since not all
+constraints on functions which allocate memory, since not all
 Haskell types can be allocated in Feldspar.
 
 # Evaluation
