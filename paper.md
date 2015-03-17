@@ -59,6 +59,11 @@ functional stream representation. Our contributions are:
 
 * We present performance evaluation, showing TODO.
 
+We have used our new monadic formulation of stream in Feldspar and
+will evaluate the improvement in the context of Feldspar. However, we
+will for the most part use Haskell code to demonstrate the technique,
+in order to make the presentation more accessible.
+
 # The Problem
 
 Consider again the functional stream representation from the
