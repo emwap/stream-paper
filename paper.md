@@ -193,7 +193,7 @@ recurrence ii (Stream init) mkExpr = Stream $ do
       a <- next
       putBuf ibuf a
       b <- withBuf ibuf $ \ib ->
-             return $ mkExpr ib
+             mkExpr ib
       return b
 ~~~
 
