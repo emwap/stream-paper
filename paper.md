@@ -66,8 +66,8 @@ in order to make the presentation more accessible.
 
 # The Problem
 
-Consider again the functional stream representation from the
-introduction.
+Consider the functional stream representation from the
+introduction again.
 
 ~~~ {.haskell}
 data Stream a = forall s. Stream (s -> (a,s)) s
