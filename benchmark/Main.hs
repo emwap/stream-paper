@@ -24,22 +24,22 @@ import Feldspar.Stream as New
 import StreamOld as Old
 
 sizes :: [Length]
-sizes = [8,16,1024,4096]
-
-coeffs :: Pull1 Double
-coeffs = thawPull1 $ value [1,0.5,0.25,0.125]
+sizes = [2,3,4,5,8,9]
 
 testdata :: [Double]
 testdata = Prelude.cycle [1,2,3,4]
 
+coeffs :: Length -> [Double]
+coeffs n = [ 1 / fromIntegral i | i <- [1..n]]
+
 copy_bench :: Pull1 Double -> Pull1 Double
 copy_bench = id
 
-fir_bench :: Pull1 Double -> Pull1 Double
-fir_bench v = share coeffs $ \cs -> New.streamAsVector (New.fir cs) v
+fir_bench :: Pull1 Double -> Pull1 Double -> Pull1 Double
+fir_bench cs v = New.streamAsVector (New.fir cs) v
 
-fir_old :: Pull1 Double -> Pull1 Double
-fir_old v = share coeffs $ \cs -> Old.streamAsVector (Old.fir cs) v
+fir_old :: Pull1 Double -> Pull1 Double -> Pull1 Double
+fir_old cs v = Old.streamAsVector (Old.fir cs) v
 
 loadFunOptsWith "" defaultOptions{platform=c99{values=[]}} ["-optc=-O3", "-optc=-save-temps"]
   ['copy_bench, 'fir_bench, 'fir_old]
@@ -61,21 +61,18 @@ mkData ds l = evaluate =<< pack (Prelude.take (fromIntegral l) ds)
 instance NFData (Ptr a)
 
 setupData len = do
-  d  <- mkData testdata len
-  ds <- allocSA $ fromIntegral len :: IO (Ptr (SA Double))
+  d  <- mkData testdata 1024
+  cs <- evaluate =<< pack (coeffs len)
+  ds <- allocSA $ fromIntegral 1024 :: IO (Ptr (SA Double))
   o  <- new ds
-  return (o,d)
+  return (o,d,cs)
 
 mkComp :: Length -> Benchmark
-mkComp l = env (setupData l) $ \ ~(o,d) -> bgroup (show l)
-  [ bench "c_copy_bench"  (whnfIO $ c_copy_bench_raw d o)
-  , bench "c_fir_bench"   (whnfIO $ c_fir_bench_raw d o)
-  , bench "c_fir_old"     (whnfIO $ c_fir_old_raw d o)
-  , bench "c_fir_ref"     (whnfIO $ c_fir_ref_raw l d o)
+mkComp l = env (setupData l) $ \ ~(o,d,cs) -> bgroup (show l)
+  [ bench "c_fir_ref"     (whnfIO $ c_fir_ref_raw cs d o)
+  , bench "c_fir_bench"   (whnfIO $ c_fir_bench_raw cs d o)
+  , bench "c_fir_old"     (whnfIO $ c_fir_old_raw cs d o)
   ]
-
-mkRef :: Length -> Benchmark
-mkRef l = env (setupData l) $ \ ~(o,d) -> bgroup (show l) [ bench "c_fir_ref" (whnfIO $ c_fir_ref_raw l d o) ]
 
 main :: IO ()
 main = defaultMainWith (mkConfig "fir_report.html")
@@ -83,13 +80,13 @@ main = defaultMainWith (mkConfig "fir_report.html")
   ]
 
 foreign import ccall unsafe "fir_ref.h fir_ref" c_fir_ref_raw
-    :: Length -> Ptr (SA Double) -> Ptr (Ptr (SA Double)) -> IO ()
+    :: Ptr (SA Double) -> Ptr (SA Double) -> Ptr (Ptr (SA Double)) -> IO ()
 
-c_fir_ref :: [Double] -> IO [Double]
-c_fir_ref xs = do
-  let len = Prelude.length xs
-  ys <- pack xs
-  ds <- allocSA $ fromIntegral len
+c_fir_ref :: [Double] -> [Double] -> IO [Double]
+c_fir_ref cs xs = do
+  cs1 <- pack cs
+  xs1 <- pack xs
+  ds <- allocSA $ fromIntegral (fromIntegral $ Prelude.length xs)
   o  <- new ds
-  c_fir_ref_raw (fromIntegral len) ys o
+  c_fir_ref_raw cs1 xs1 o
   peek o >>= from
