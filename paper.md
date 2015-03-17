@@ -242,6 +242,121 @@ Implementing iir filters requires a somewhat more sophisticated
 version of `recurrence` which also has a cyclic buffer for the
 elements of the output stream.
 
+# Fusion
+
+The functional stream representation supports fusion, meaning that
+intermediate streams are removed. Stream fusion [@coutts2007stream] is
+a good demonstration of this although it employs a slightly more
+sophisticated stream representation.
+
+Our new monadic representation also supports fusion in a similar
+fashion to the functional representation. A key difference is that two
+of the monad laws are essential to achieve good code generation: the
+left identity law and associativity of bind. Here is the left identity
+law:
+
+~~~{.haskell}
+do a <- return x
+   f a
+==
+do f x
+~~~
+
+And the following demonstrates the associativity of bind:
+
+~~~{.haskell}
+do b <- do a <- m
+           f a
+   g b
+==
+do a <- m
+   b <- f a
+   g b
+~~~
+
+We demonstrate fusion using a concrete example: `map f . map
+g`. Recall the definition of `map` below:
+
+~~~ {.haskell}
+map :: (a -> b) -> Stream a -> Stream b
+map f (Stream init) = Stream $ do
+  next <- init
+  loop $ do
+    a <- next
+    return (f a)
+~~~
+
+What follows is a derivation of an efficient implementation of 
+`map f . map g`. Each step is annotated with the law used in the
+transformation. In order to get fusion going we will apply 
+`map f . map g` to concrete but arbitrary stream `Stream init`. 
+
+~~~ {.haskell}
+map f (map g (Stream init))
+
+=> { inlining map }
+
+map f (Stream $ do
+  next <- init
+  loop $ do
+    a <- next
+    return (f a)
+
+=> { inlining map }
+
+Stream $ do
+  next' <- do
+    next <- init
+    loop $ do
+    a <- next
+    return (g a)
+  loop $ do
+    b <- next'
+    return (f b)
+
+=> { bind associativity }
+
+Stream $ do
+  next <- init
+  next' <- loop $ do
+    a <- next
+    return (g a)
+  loop $ do
+    b <- next'
+    return (f b)
+
+=> { loop = return, left identity }
+
+Stream $ do
+  next <- init
+  loop $ do
+    b <- do
+      a <- next
+      return (g a)
+    return (f b)
+
+=> { bind associativity }
+
+Stream $ do
+  next <- init
+  loop $ do
+    a <- next
+    b <- return (g a)
+    return (f b)
+
+=> { left identity }
+
+Stream $ do
+  next <- init
+  loop $ do
+    a <- next
+    return (f (g a))
+~~~
+
+The final result is as efficient as one can possible hope for.
+
+Fusing combinators other than `map` follows a similar pattern.
+
 # Avoiding Multiple Loop Variables
 
 The stream representation already presented allows for mutation
