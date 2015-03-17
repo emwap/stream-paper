@@ -43,11 +43,11 @@ if performance is sufficient, copying data consumes more power and
 generates more heat.
 
 This paper presents a new representation of streams which allows for
-using in-place updates while retaining the advantages of the
+using mutation while retaining the advantages of the
 functional stream representation. Our contributions are:
 
 * A new stream representation, `M (M a)`, for some monad `M` which
-  supports in-place updates. The new representation, while relying
+  supports mutation. The new representation, while relying
   on imperative features, can still be given a functional interface,
   just like the functional stream representation.
 
@@ -92,13 +92,13 @@ window sizes.
 
 Similar problems appear for many applications of streams, such as
 digital fir and iir filters. What we would like is a representation of
-streams were we can use in-place updates to efficiently implement such
+streams were we can use mutation to efficiently implement such
 functions.
 
 # Efficient Monadic Streams
 
 We present a new representation for streams which uses monads to
-enable in-place updates.
+enable mutation.
 
 ~~~ {.haskell}
 data Stream a = Stream (IO (IO a))
@@ -245,8 +245,8 @@ elements of the output stream.
 
 # Avoiding multiple loop variables
 
-The stream representation already presented allows for in-place
-updates which improves efficiency of the generated code
+The stream representation already presented allows for mutation
+which improves efficiency of the generated code
 considerably. The generated code still suffers from a problem where
 fused functions will cause multiple loop indices to appear in the same
 loop. Consider the following pattern:
@@ -348,7 +348,7 @@ necessary functionality is provided by the respective monads. We could
 imagine a representation `M (N a)` where the outer monad `M` is
 responsible for initializing memory and the inner monad `N` is
 responsible for reading and writing that memory.  We can let `M a` be
-`(a,s)` and `N a` be `(s -> (a,s))` if we forego in-place updates. We
+`(a,s)` and `N a` be `(s -> (a,s))` if we forego mutation. We
 recognize them as the writer monad and the state monad. Combining
 these two monads results in the functional stream representation.
 
