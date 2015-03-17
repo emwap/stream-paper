@@ -280,8 +280,8 @@ do a <- m
    g b
 ~~~
 
-We demonstrate fusion using a concrete example: `map f . map
-g`. Recall the definition of `map` below:
+We demonstrate fusion using a concrete example: `map f . map g`. To
+refresh our memories we repeat the definition of `map` below:
 
 ~~~ {.haskell}
 map :: (a -> b) -> Stream a -> Stream b
