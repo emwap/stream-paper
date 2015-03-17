@@ -574,8 +574,8 @@ Functional Reactive Programming (FRP) was initially concieved as a way
 to program compositionally with time varying values where time is
 treated continuously [@elliott1997functional]. In contrast, many
 implementations of FRP use a discrete notion of time
-[@nilsson2002functional,@czaplicki2013asynchronous,@patai2011efficient]. Discrete
-time FRP and streams are similar in many respects, as explained in
+[@nilsson2002functional; @czaplicki2013asynchronous; @patai2011efficient]. Discrete
+time FRP and streams are similar in many respects, as explained by
 @wan2000functional. However, while the goal of FRP is often on
 expressivity, we use streams in the context of digital signal
 processing where we are happy to trade expressivity for efficiency.
