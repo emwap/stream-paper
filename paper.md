@@ -108,8 +108,7 @@ It is straightforward to parameterize this representation on the
 particular choice of monad. We use the `IO` monad here for the sake of
 concreteness.
 
-Why does the representation have two levels of monads? We can convert
-something of type `IO (IO a)` to `IO a` by using `join`. The key to
+Why does the representation have two levels of monads? The key to
 understanding this representation is that the outer monadic
 computation performs initialization and is only meant to be called
 once. The outer monad computes a new monadic computation corresponding
