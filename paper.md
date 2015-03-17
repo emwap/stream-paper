@@ -9,6 +9,10 @@ author:
 institute:
  - Chalmers University of Technology
  - SICS Swedish ICT AB
+header-includes:
+  - \usepackage{tikz}
+  - \usepackage{pgfplots}
+  - \usepackage{pgfplotstable}
 abstract:
 
   1. state the problem
@@ -443,6 +447,36 @@ constraints on functions which allocate memory, since not all
 Haskell types can be allocated in Feldspar.
 
 # Evaluation
+
+\begin{figure}[tp]
+\begin{tikzpicture}
+ \begin{axis}[
+      height=0.6\textwidth,
+      width=0.8\textwidth,
+      title=FIR filter,
+      title style={at={(0.5,0.94)},anchor=south},
+      xlabel=\scriptsize{filter order},
+      ylabel=s,
+      every axis x label/.style={at={(1,-0.09)},anchor=north east},
+      every axis y label/.style={at={(-0.1,0.65)},anchor=east},
+      legend entries={\scriptsize{C reference},\scriptsize{Pure},\scriptsize{Monadic}},
+      legend style={at={(0.03,0.93)},anchor=north west},
+      cycle list={blue,mark=*\\%
+                  red,mark=square*\\%
+                  brown,mark=+\\%
+                 }
+    ]
+    \addplot shell[prefix=pgfshell_,id=ref]
+        { awk -F'/|,' '/c_fir_ref/ { print $2,$5 }' benchmark/fir.csv};
+    \addplot shell[prefix=pgfshell_,id=pure]
+        { awk -F'/|,' '/c_fir_old/ { print $2,$5 }' benchmark/fir.csv};
+    \addplot shell[prefix=pgfshell_,id=monadic]
+        { awk -F'/|,' '/c_fir2_bench/ { print $2,$5 }' benchmark/fir.csv};
+ \end{axis}
+\end{tikzpicture}
+\caption{Running time of filters compared to reference C implementations.}
+\label{fig:measurements}
+\end{figure}
 
 We have measured the difference between functional and monadic streams
 in Feldspar across three difference benchmarks: moving average, fir-
