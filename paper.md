@@ -370,16 +370,7 @@ foo arr = remember n $ .. $ cycle arr
 ~~~
 
 The generated code for this pattern contains one loop index
-originating from `cycle` and one from `remember`:
-
-~~~ {.C}
-for (int i = 0; i < ..; i++) {
-  TODO: Add correct code;
-  ...
-}
-~~~
-
-Good C compilers might remove multiple loop indices but relying on the
+originating from `cycle` and one from `remember`. Good C compilers might remove multiple loop indices but relying on the
 C compiler to perform that optimization on signal processing
 applications is a risk. The mere presence of multiple loop indices
 might prevent earlier optimizations at the functional level from
@@ -423,14 +414,7 @@ cycle arr = Stream $ do
 ~~~
 
 The new code for `cycle` is considerably shorter and will also
-generate better code:
-
-~~~ {.C}
-for (int i = 0; i < ..; i++) {
-  TODO: Add example of better code
-  ...
-}
-~~~
+generate better code.
 
 # Streams for EDSLs
 
