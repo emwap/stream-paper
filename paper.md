@@ -204,7 +204,7 @@ recurrence ii (Stream init) mkExpr = Stream $ do
 
 The core functionality is exposed by the `recurrence` function which
 uses a mutable cyclic buffer. The type signatures for the
-operations we rely on are:
+operations we use are:
 
 ~~~ {.haskell}
 initBuffer :: Array Int a -> IO (Buffer a)
