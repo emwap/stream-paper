@@ -466,6 +466,32 @@ infinite streams, with the addition of passing around the length
 parameter. Additionally, functions like appending two streams now make
 sense, and it is possible to allocate the whole stream to memory.
 
+# A Pure Interface
+
+In this paper we have used `IO` as the monad that provides mutability. However, if we only care about mutability and not about general effects that affect the external world, we can get away with using the `ST` monad instead:
+
+~~~ {.haskell}
+data Stream s a = Stream (ST s (ST s a))
+~~~
+
+By using `STRef` instead of `IORef` and `STArray` instead of `IOArray`, we can reimplement all stream functions for this new representation. The advantage of using `ST` becomes visible in functions that consume streams, such as `remember`:
+
+~~~ {.haskell}
+remember :: Int -> (forall s . Stream s a) -> Array Int a
+remember len str = runSTArray $ remember' len str
+
+remember' :: Int -> Stream s a -> ST s (STArray s Int a)
+remember' len (Stream init) = do
+  arr  <- newArray_ (0,len-1)
+  next <- init
+  forM [0..len-1] $ \i -> do
+    a <- next
+    writeArray arr i a
+  return arr
+~~~
+
+Now the result is a pure `Array` value rather than a monadic one. This means that we can hide all uses of monads from the user and provide a pure interface to streams. However, in order to make use of mutability, one has to write monadic code (or use canned solutions, such as `recurrence`).
+
 # Related Work
 
 \paragraph{\bf Lazy streams}
