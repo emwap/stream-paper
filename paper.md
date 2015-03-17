@@ -1,6 +1,6 @@
 ---
 documentclass: 'llncs'
-title: Streams and stuff
+title: Efficient Monadic Streams
 author:
  - Josef Svenningsson\inst{1}
  - Emil Axelsson\inst{1}
@@ -57,7 +57,8 @@ functional stream representation. Our contributions are:
 * We show how our new stream representation can be used in EDSLs.
   It is currently used in the Feldspar language.
 
-* We present performance evaluation, showing TODO.
+* We present performance evaluation, showing a clear performance
+  advantage when using the monadic representation.
 
 We have used our new monadic formulation of stream in Feldspar and
 will evaluate the improvement in the context of Feldspar. However, we
