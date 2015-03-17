@@ -59,7 +59,7 @@ functional stream representation. Our contributions are:
 
 * We present performance evaluation, showing TODO.
 
-# The problem
+# The Problem
 
 Consider again the functional stream representation from the
 introduction.
