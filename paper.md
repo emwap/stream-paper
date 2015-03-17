@@ -242,7 +242,7 @@ Implementing iir filters requires a somewhat more sophisticated
 version of `recurrence` which also has a cyclic buffer for the
 elements of the output stream.
 
-# Avoiding multiple loop variables
+# Avoiding Multiple Loop Variables
 
 The stream representation already presented allows for mutation
 which improves efficiency of the generated code
@@ -365,7 +365,7 @@ infinite streams, with the addition of passing around the length
 parameter. Additionally, functions like appending two streams now make
 sense, and it is possible to allocate the whole stream to memory.
 
-# Related work
+# Related Work
 
 Streams can be represented succinctly in lazy languages like Haskell
 with the following definition:
