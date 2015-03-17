@@ -238,10 +238,9 @@ More advanced digital filters, like fir filters, can be
 implemented in a similar fashion to the moving average:
 
 ~~~ {.haskell}
-fir :: Array Int a -> Stream a -> Stream a
-fir b inp =
-    recurrence (listArray (0,l-1) (replicate l 0)) inp
-               (scalarProd b)
+fir :: Num a => Array Int a -> Stream a -> Stream a
+fir b inp = recurrence (listArray (0,l-1) (replicate l 0)) inp
+                       (scalarProd b)
   where l = rangeSize (bounds b)
 ~~~
 
