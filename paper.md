@@ -149,8 +149,8 @@ cycle arr = Stream $ do
   let l = length arr
   loop $ do
     i <- readIORef r
-    arr!(i `mod` l)
     writeIORef r (i+1)
+    return (arr!(i `mod` l))
 ~~~
 
 An infinite stream cannot be stored in memory. Saving a prefix of an
