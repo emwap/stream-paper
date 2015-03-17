@@ -419,12 +419,14 @@ generate better code.
 # Streams for EDSLs
 
 Our new monadic representation of streams is a natural fit for
-embedded domain specific languages and works particularly well with the
-technique of combining shallow and deep embeddings
+embedded domain specific languages and works particularly well with
+the technique of combining shallow and deep embeddings
 [@svenningsson2013combining]. Monads can be embedded in an EDSL using
-the technique by @genericmonads11. Embedding monads in this way
-gives fusion for free since the host language applies the right monads
-laws automatically.
+the technique by @genericmonads11. Embedding monads in this way is
+particularly attractive: the embedding of monads applies the two monad
+laws by evaluation in the host language. This means that the kind of
+rewriting explained in the [Fusion] section happens automatically, no
+extra code needs to be written in order to achieve the optimization.
 
 Feldspar [@FeldsparIFL2010] has a stream library that uses a monadic
 embedding. The stream library is almost identical to the Haskell
