@@ -95,7 +95,7 @@ digital fir and iir filters. What we would like is a representation of
 streams were we can use in-place updates to efficiently implement such
 functions.
 
-# A New Representation for Streams
+# Efficient Monadic Streams
 
 We present a new representation for streams which uses monads to
 enable in-place updates.
@@ -313,13 +313,13 @@ the technique by @genericmonads11. Embedding monads in this way
 gives fusion for free since the host language applies the right monads
 laws automatically.
 
-Feldspar [@FeldsparIFL2010] has a stream library using a
-monadic embedding. The stream library is almost identical to the
-Haskell library presented in Section [A New Representation for
-Streams]. The stream type is the same except using a different
-embedded monad. The only difference for the programmer is that
-Feldspar requires some constraints on functions which allocate to
-memory, since not all Haskell types can be allocated in Feldspar.
+Feldspar [@FeldsparIFL2010] has a stream library using a monadic
+embedding. The stream library is almost identical to the Haskell
+library presented in Section [Efficient Monadic Streams]. The stream
+type is the same except using a different embedded monad. The only
+difference for the programmer is that Feldspar requires some
+constraints on functions which allocate to memory, since not all
+Haskell types can be allocated in Feldspar.
 
 # Evaluation
 
