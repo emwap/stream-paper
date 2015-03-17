@@ -535,18 +535,18 @@ are problematic in the context of code generating EDSLs. The monadic
 formulation of streams we have presented has the advantage of being
 usable even in an EDSL context.
 
-\paragraph{\bf Co-Iterative streams}
-[@Caspi19981], [@coutts2007stream]
+\paragraph{\bf Coiterative streams}
+A coiterative representation of streams makes it possible to avoid recursion in the definition of streams and in functions defined for streams [@Caspi19981]. Our initial representation in section \ref{the-problem} was based on coiteration.
 
-Stream fusion:
+The stream fusion framework [@coutts2007stream] builds on the following coiterative representation:
 
 ~~~ {.haskell}
 data Stream a = forall s . Stream (s -> Step a s) s
 ~~~
 
-* Similar to our initial `Stream` type
-* Possibly finite
-* No mutable state
+The difference to our initial representation is the `Step` type that is returned by the step function. The `Step` type has three cases: (1) a pair of an element `a` and a new state `s`, or (2) just a new state, or (3) a value signaling that the stream has ended. This stream representation makes it possible to give efficient definitions of many stream operations and make sure that streams are fused when operations are composed. The stream fusion framework uses GHC rewrite rules to convert list-based code to stream-based code where possible.
+
+In contrast to our work, stream fusion does not support streams with mutable state.
 
 \paragraph{\bf Conduits, Pipes, etc.}
 There are many Haskell libraries for dealing with streaming data, such as Conduit [@conduit-overview], Pipes [@pipes] and Iteratees [@kiselyov2012iteratees]. Most of these libraries define streams over an underlying monad. Choosing `IO` as the underlying monad allows for the streaming programs to perform external communication. However, there is nothing stopping from using the `IO` monad also for "internal" effects, such as mutable state.
