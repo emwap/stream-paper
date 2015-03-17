@@ -482,13 +482,13 @@ sense, and it is possible to allocate the whole stream to memory.
 
 # A Pure Interface
 
-In this paper we have used `IO` as the monad that provides mutability. However, if we only care about mutability and not about general effects that affect the external world, we can get away with using the `ST` monad instead:
+We have used `IO` as the monad for mutability so far. We can get away with using the `ST` monad  f we only care about mutability and not about general effects that affect the external world:
 
 ~~~ {.haskell}
 data Stream s a = Stream (ST s (ST s a))
 ~~~
 
-By using `STRef` instead of `IORef` and `STArray` instead of `IOArray`, we can reimplement all stream functions for this new representation. The advantage of using `ST` becomes visible in functions that consume streams, such as `remember`:[^remember]
+We can reimplement all stream functions for this new representation by using `STRef` instead of `IORef` and `STArray` instead of `IOArray`. The advantage of using `ST` becomes visible in functions that consume streams, such as `remember`:[^remember]
 
 ~~~ {.haskell}
 remember :: Int -> (forall s . Stream s a) -> Array Int a
@@ -506,7 +506,7 @@ remember' len (Stream init) = do
 
 [^remember]: The helper function `remember'` is needed to get the types right.
 
-Now the result is a pure `Array` value rather than a monadic one. This means that we can hide all uses of monads from the user and provide a pure interface to streams. However, in order to make use of mutability, one has still to write monadic code (or use canned solutions, such as `recurrence`).
+The result is now a pure `Array` value rather than a monadic one. This means that we can hide all uses of monads from the user and provide a pure interface to streams. However, in order to make use of mutability, one has still to write monadic code (or use canned solutions, such as `recurrence`).
 
 # Related Work
 
