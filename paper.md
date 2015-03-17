@@ -548,7 +548,7 @@ The difference to our initial representation is the `Step` type that is returned
 
 In contrast to our work, stream fusion does not support streams with mutable state.
 
-\paragraph{\bf Conduits, Pipes, etc.}
+\paragraph{\bf Effectful stream programming}
 There are many Haskell libraries for dealing with streaming data, such as Conduit [@conduit-overview], Pipes [@pipes] and Iteratees [@kiselyov2012iteratees]. Most of these libraries define streams over an underlying monad. Choosing `IO` as the underlying monad allows for the streaming programs to perform external communication. However, there is nothing stopping from using the `IO` monad also for "internal" effects, such as mutable state.
 
 Stream representations such as the one in Conduits can describe more general networks than our `Stream` type (e.g. nodes with different input and output rates). However, being based on recursive definitions, those stream programs are generally not guaranteed to fuse. Though, when certain requirements are met, conduits are subject to fusion [@conduit-fusion].
