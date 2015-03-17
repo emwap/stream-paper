@@ -531,8 +531,8 @@ data Stream' a = Cons a (Stream a)
 
 The above definition enables the use of mutation which allows for more
 efficient implementations of filters. However, recursive definitions
-are problematic in the context of code generating EDSLs. The monadic
-formulation of streams we have presented has the advantage of being
+are problematic in the context of code generating EDSLs. Our monadic
+representation of streams has the advantage of being
 usable even in an EDSL context.
 
 \paragraph{\bf Coiterative streams}
