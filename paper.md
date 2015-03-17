@@ -132,7 +132,7 @@ map f (Stream init) = Stream $ do
 The new stream is initialized by running the initialization
 computation from the input stream, yielding the step function `next`.
 Then, in the new step function, the function `next` is run to produce
-an element `a` which transformed by the function `f` and then
+an element `a` which is transformed by the function `f` and then
 returned. The combinator `loop` is defined as `return`. We use the
 name `loop` to convey that the code returned by `loop` is executed an
 indefinite number of times.
@@ -172,7 +172,7 @@ The code starts by allocating a mutable array of the appropriate
 size, followed by an initialization of the array. The initialization
 produces the `next` function which is used in the loop body to produce
 new elements in the stream which are successively stored in the array.
-When the loop is done, the mutable array is frozen, returning a
+When the loop is done, the mutable array is frozen, returning an
 immutable array as the final result.
 
 We are now in a position to write  an efficient moving average using
@@ -286,10 +286,10 @@ map f (Stream init) = Stream $ do
     return (f a)
 ~~~
 
-What follows is a derivation of an efficient implementation of 
+What follows is a derivation of an efficient implementation of
 `map f . map g`. Each step is annotated with the law used in the
-transformation. In order to get fusion going we will apply 
-`map f . map g` to concrete but arbitrary stream `Stream init`. 
+transformation. In order to get fusion going we will apply
+`map f . map g` to concrete but arbitrary stream `Stream init`.
 
 ~~~ {.haskell}
 map f (map g (Stream init))
