@@ -24,7 +24,6 @@ executable benchmark
     base >=4 && <4.8,
     deepseq,
     criterion,
-    containers,
     syntactic < 2,
     feldspar-language < 0.7,
     feldspar-compiler < 0.7

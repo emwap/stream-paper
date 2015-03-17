@@ -8,13 +8,12 @@ import Criterion.Types
 import Control.Exception (evaluate)
 
 import Foreign.Ptr
+import Foreign.Storable (peek)
 import Foreign.Marshal (new)
 import Control.DeepSeq (NFData(..))
 
-import qualified Data.Map as Map
-
 import Feldspar
-import Feldspar.Vector (Pull1,thawPull1)
+import Feldspar.Vector
 import Feldspar.Compiler (defaultOptions,Options(..))
 import Feldspar.Compiler.Backend.C.Options (Platform(..))
 import Feldspar.Compiler.Backend.C.Platforms (c99)
@@ -63,7 +62,6 @@ instance NFData (Ptr a)
 
 setupData len = do
   d  <- mkData testdata len
-  ls <- pack [len]
   ds <- allocSA $ fromIntegral len :: IO (Ptr (SA Double))
   o  <- new ds
   return (o,d)
@@ -73,20 +71,25 @@ mkComp l = env (setupData l) $ \ ~(o,d) -> bgroup (show l)
   [ bench "c_copy_bench"  (whnfIO $ c_copy_bench_raw d o)
   , bench "c_fir_bench"   (whnfIO $ c_fir_bench_raw d o)
   , bench "c_fir_old"     (whnfIO $ c_fir_old_raw d o)
-  , bench "c_fir_ref"     (whnfIO $ c_fir_ref l d o)
+  , bench "c_fir_ref"     (whnfIO $ c_fir_ref_raw l d o)
   ]
 
 mkRef :: Length -> Benchmark
-mkRef l = env (setupData l) $ \ ~(o,d) -> bgroup (show l) [ bench "c_fir_ref" (whnfIO $ c_fir_ref l d o) ]
-
-regroup :: Map.Map Length [Benchmark] -> [Benchmark]
-regroup m = [ bgroup (show l) bs | (l,bs) <- Map.assocs m ]
+mkRef l = env (setupData l) $ \ ~(o,d) -> bgroup (show l) [ bench "c_fir_ref" (whnfIO $ c_fir_ref_raw l d o) ]
 
 main :: IO ()
 main = defaultMainWith (mkConfig "fir_report.html")
   [ env setupPlugins $ \_ -> bgroup "fir" $ Prelude.map mkComp sizes
   ]
 
-foreign import ccall unsafe "fir_ref.h fir_ref" c_fir_ref
+foreign import ccall unsafe "fir_ref.h fir_ref" c_fir_ref_raw
     :: Length -> Ptr (SA Double) -> Ptr (Ptr (SA Double)) -> IO ()
 
+c_fir_ref :: [Double] -> IO [Double]
+c_fir_ref xs = do
+  let len = Prelude.length xs
+  ys <- pack xs
+  ds <- allocSA $ fromIntegral len
+  o  <- new ds
+  c_fir_ref_raw (fromIntegral len) ys o
+  peek o >>= from
