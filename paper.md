@@ -438,9 +438,18 @@ Haskell types can be allocated in Feldspar.
 
 # Evaluation
 
+We have measured the difference between functional and monadic streams
+in Feldspar across three difference benchmarks: moving average, fir-
+and iir filters. Apart from the Feldspar version, we also have a
+handwritten C benchmark to get a baseline for our measurements.
+However, it is not entirely an apples-to-apples comparison since
+the monadic stream implementation keeps the buffer in registers and
+unrolls the loop for updating the buffer. Yet, the measurements give
+some indication of how performant our implementation is.
+
 # Relation to Functional Streams
 
-The functional representation of streams can be recovered from our
+The functional representation of streams can be recovered from the
 monadic representation to shed new light on the monadic
 representation.  Consider again the type `M (M a)`. The outer and the
 inner monads are the same but they could be different as long as the
