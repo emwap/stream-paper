@@ -2,7 +2,7 @@
 -- documentation, see http://haskell.org/cabal/users-guide/
 
 name:                benchmark
--- version:             0.1.0.0
+version:             0.1.0.0
 -- synopsis:
 -- description:
 -- license:             BSD3
@@ -17,16 +17,20 @@ cabal-version:       >=1.10
 
 executable benchmark
   main-is:             Main.hs
+  hs-source-dirs: . ../Code
   -- other-modules:
   other-extensions:
   build-depends:
     base >=4 && <4.8,
     deepseq,
     criterion,
+    containers,
     syntactic < 2,
     feldspar-language < 0.7,
     feldspar-compiler < 0.7
   ghc-options: -O2
+  c-sources: cbits/fir_ref.c
+  cc-options: -std=c99 -fPIC -O2
 
   -- hs-source-dirs:
   default-language:    Haskell2010
