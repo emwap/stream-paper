@@ -367,7 +367,7 @@ sense, and it is possible to allocate the whole stream to memory.
 
 # Related work
 
-In lazy languages like Haskell, streams can be represented succinctly
+Streams can be represented succinctly in lazy languages like Haskell
 with the following definition:
 
 ~~~ {.haskell}
@@ -375,9 +375,9 @@ data Stream a = Cons a (Stream a)
 ~~~
 
 Lazy streams suffer from the same problem as the functional stream
-representation presented earlier in the paper: some algorithms
-are not efficiently implementable. It is possible to give a monadic
-variant of this type as well:
+representation presented earlier in the paper: some algorithms are not
+possible to implement efficiently. The monadic variant of this type
+is:
 
 ~~~ {.haskell}
 type Stream a = M (Stream' a)
@@ -385,11 +385,11 @@ type Stream a = M (Stream' a)
 data Stream' a = Cons a (Stream a)
 ~~~
 
-The above definition enables the use of mutation and allows better for
-more efficient implementations of filters. However, this definition
-is recursive and is problematic in the context of code generating
-EDSLs. The monadic formulation of streams we have presented has the
-advantage of being usable even in an EDSL context.
+The above definition enables the use of mutation which allows for more
+efficient implementations of filters. However, recursive definitions
+are problematic in the context of code generating EDSLs. The monadic
+formulation of streams we have presented has the advantage of being
+usable even in an EDSL context.
 
 * FRP
 
