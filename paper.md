@@ -249,18 +249,28 @@ The stream representation already presented allows for in-place
 updates which improves efficiency of the generated code
 considerably. The generated code still suffers from a problem where
 fused functions will cause multiple loop indices to appear in the same
-loop. Consider the following function:
+loop. Consider the following pattern:
 
 ~~~ {.haskell}
-foo arr = remember n $ map (+1) $ cycle arr
+foo arr = remember n $ .. $ cycle arr
 ~~~
 
-The generated code for this function will contain two loop indices,
-one originating from `cycle` and one from `remember`. Good C compilers
-might remove multiple loop indices but relying on the C compiler to
-perform that optimization on signal processing applications is a
-risk. The mere presence of multiple loop indices might prevent earlier
-optimizations at the functional level from kicking in.
+The generated code for this pattern contains one loop index
+originating from `cycle` and one from `remember`:
+
+~~~ {.C}
+for (int i = 0; i < ..; i++) {
+  TODO: Add correct code;
+  ...
+}
+~~~
+
+Good C compilers might remove multiple loop indices but relying on the
+C compiler to perform that optimization on signal processing
+applications is a risk. The mere presence of multiple loop indices
+might prevent earlier optimizations at the functional level from
+kicking in.
+
 
 Parameterising the stream representation with the loop
 counter solves the problem:
@@ -299,9 +309,14 @@ cycle arr = Stream $ do
 ~~~
 
 The new code for `cycle` is considerably shorter and will also
-generate better code.
+generate better code:
 
-TODO: Add example of better code.
+~~~ {.C}
+for (int i = 0; i < ..; i++) {
+  TODO: Add example of better code
+  ...
+}
+~~~
 
 # Streams for EDSLs
 
