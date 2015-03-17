@@ -548,11 +548,11 @@ The difference to our initial representation is the `Step` type that is returned
 
 In contrast to our work, stream fusion does not support streams with mutable state.
 
-  <!--
+<!--
 TODO We could mention the fact that the Vector package has a co-iterative stream representation with an extra length argument, like our finite streams. But this is not a big thing in our paper, so I'll skip it for now.
 
 A suitable reference could be "Exploiting vector instructions with generalized stream fusion" (Mainland et al., ICFP 2013) http://dl.acm.org/citation.cfm?id=2500601
-  -->
+-->
 
 \paragraph{\bf Effectful stream programming}
 There are many Haskell libraries for dealing with streaming data, such as Conduit [@conduit-overview], Pipes [@pipes] and Iteratees [@kiselyov2012iteratees]. Most of these libraries define streams over an underlying monad. Choosing `IO` as the underlying monad allows for the streaming programs to perform external communication. However, there is nothing stopping from using the `IO` monad also for "internal" effects, such as mutable state.
