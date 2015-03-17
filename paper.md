@@ -222,8 +222,8 @@ The function `initBuffer` creates a new buffer, `putBuf` adds a new
 element while discarding the oldest element. The programmer can get an
 immutable view of the current contents of the buffer in a local scope
 by using `withBuf`. The function `withBuf` can be implemented without
-copying but it requires that the programmer does not provide a
-function which returns the whole array.
+copying but program correctness relies on the programmer to ensure
+that the provided function does not return the whole array.
 
 Returning to the function `recurrence`; the input stream stream is
 initialized as is the cyclic buffer. For each element in the output
