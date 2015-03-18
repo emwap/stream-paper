@@ -24,7 +24,7 @@ abstract: |
   remove duplicate loop variables.
 
   Our measurements show that our new monadic representation
-  consistently outperforms the functional representation by more than
+  consistently outperforms the functional representation by almost
   an order of magnitude.
 ---
 
@@ -67,8 +67,9 @@ functional stream representation. Our contributions are:
 * We show how our new stream representation can be used in EDSLs.
   It is currently used in the Feldspar language.
 
-* We demonstrate a performance
-  advantage of XXX\% compared to YYY when using our monadic representation.
+* We demonstrate a performance advantage of almost an order of
+  magnitude compared to the functional representation when using our
+  monadic representation.
 
 We have used our new monadic formulation of stream in Feldspar and
 will evaluate the improvement in the context of Feldspar. However, we
