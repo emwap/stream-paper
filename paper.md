@@ -9,7 +9,7 @@ author:
 institute:
  - Chalmers University of Technology
  - SICS Swedish ICT AB
-abstract:
+abstract: |
   Functional stream representations allow for a high level,
   compositional way of programming digital signal processing
   algorithms. However, some algorithms, such as filters, cannot
