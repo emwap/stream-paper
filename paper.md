@@ -453,6 +453,51 @@ difference for the programmer is that Feldspar requires some
 constraints on functions which allocate memory, since not all
 Haskell types can be allocated in Feldspar.
 
+Using the monadic stream representation with EDSLs enables another
+trick not available with the functional representation: the buffer can
+be stored entirely in registers. In the versions of the moving average
+function we've presented so far the purely functional representation
+uses an immutable array as a buffer while the monadic representation
+uses a mutable cyclic buffer. However, in an EDSL the buffer can be
+represented as a Haskell list of mutable references, provided that the
+EDSL has support for references. Since the buffer is implemented as a
+Haskell list, the list will be traversed at EDSL compile time and not
+be present in the generated code. Below is a Feldspar version
+of the `recurrence` function which stores the buffer in references.
+
+~~~ {.haskell}
+recurrenceS :: (Type a, Type b) =>
+               [Data a] -> Stream (Data a) ->
+               ([Data a] -> Data b) ->
+               Stream (Data b)
+recurrenceS ii (Stream init) mkExpr = Stream $ do
+    next <- init
+    ris  <- mapM newRef ii
+    loop $ do
+      a <- next
+      if (not $ null ii) then pBuf ris a else return ()
+      b <- wBuf ris $ \ib ->
+             return $ mkExpr ib
+      return b
+  where
+    pBuf rs a = zipWithM (\r1 r2 -> getRef r1 >>= setRef r2) 
+                         (tail $ reverse rs) (reverse rs)
+             >> setRef (head rs) a
+    wBuf rs f = mapM getRef rs >>= f
+~~~
+
+Without going into all details about how Feldspar is embedded, we
+focus on the use of references. The variable `ris` is bound to a list
+of references which are initialized by `mapM newRef ii`. The function
+`wBuf` is used to read from all references and pass the resulting list
+of values to a continuation. It is used similarly to `withBuf` in the
+cyclic buffer implementation. The workhorse in this implementation is
+`pBuf` which conceptually rotates the buffer one step and adds the
+latest element. It is achieved by shifting the values between
+registers. As we will see in the [Evaluation] section, this version
+is very fast.
+
+
 # Evaluation
 
 \begin{figure}[tp]
@@ -534,9 +579,9 @@ frequently to make sure that the buffer is presented to the programmer
 with elements in the right order and not shifted. As the window grows
 larger the cost of the modulus operations kill the performance.  The
 third set of points shows the result of an implementation where the
-buffer is kept entirely in registers. It readily outperforms the two
-other versions, and is consistently more than an order of magnitude
-faster than the functional representation.
+buffer is kept entirely in registers. That version readily outperforms
+the two other versions, and is consistently more than an order of
+magnitude faster than the functional representation.
 
 The fir filter benchmark is presented in figure
 \ref{fig:measurements-fir}. The "Pure" points again show the
