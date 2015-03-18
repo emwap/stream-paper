@@ -15,10 +15,22 @@ header-includes:
   - \usepackage{pgfplotstable}
 abstract:
 
-  1. state the problem
-  2. say why it is interesting
-     Our representation allows code generation using in-place updates without spurious loop-indices.
-     The generated code is XXX% more efficient than the regular functional stream representation.
+  Functional stream representations allow for a high level,
+  compositional way of programming digital signal processing
+  algorithms. However, some algorithms, such as filters, cannot
+  be efficiently implemented using purely functional techniques,
+  due to excessive copying of data.
+
+  We present a monadic representation of stream which introduces the
+  ability to use mutation for efficiency when implementing
+  algorithms. Still, our representation enjoys many of the benefits of
+  purely functional streams, such as a functional API and fusion.
+  Our representation enables further optimizations: we show how to
+  remove duplicate loop variables.
+
+  Our measurements show that our new monadic representation
+  consistently outperforms the functional representation by more than
+  an order of magnitude.
 
 ---
 
