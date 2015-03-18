@@ -9,12 +9,7 @@ author:
 institute:
  - Chalmers University of Technology
  - SICS Swedish ICT AB
-header-includes:
-  - \usepackage{tikz}
-  - \usepackage{pgfplots}
-  - \usepackage{pgfplotstable}
 abstract:
-
   Functional stream representations allow for a high level,
   compositional way of programming digital signal processing
   algorithms. However, some algorithms, such as filters, cannot
@@ -31,7 +26,6 @@ abstract:
   Our measurements show that our new monadic representation
   consistently outperforms the functional representation by more than
   an order of magnitude.
-
 ---
 
 # Introduction
