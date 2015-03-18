@@ -459,36 +459,6 @@ Haskell types can be allocated in Feldspar.
  \begin{axis}[
       height=0.6\textwidth,
       width=0.8\textwidth,
-      title=FIR filter,
-      title style={at={(0.5,0.94)},anchor=south},
-      xlabel=\scriptsize{filter order},
-      ylabel=s,
-      every axis x label/.style={at={(1,-0.09)},anchor=north east},
-      every axis y label/.style={at={(-0.1,0.65)},anchor=east},
-      legend entries={\scriptsize{C reference},\scriptsize{Pure},\scriptsize{Monadic}},
-      legend style={at={(0.03,0.93)},anchor=north west},
-      cycle list={blue,mark=*\\%
-                  red,mark=square*\\%
-                  brown,mark=+\\%
-                 }
-    ]
-    \addplot shell[prefix=pgfshell_,id=ref]
-        { awk -F'/|,' '/c_fir_ref/ { print $2,$5 }' benchmark/benchmark.csv};
-    \addplot shell[prefix=pgfshell_,id=pure]
-        { awk -F'/|,' '/c_fir_old/ { print $2,$5 }' benchmark/benchmark.csv};
-    \addplot shell[prefix=pgfshell_,id=monadic]
-        { awk -F'/|,' '/c_fir2_bench/ { print $2,$5 }' benchmark/benchmark.csv};
- \end{axis}
-\end{tikzpicture}
-\caption{Running time of filters compared to reference C implementations.}
-\label{fig:measurements-fir}
-\end{figure}
-
-\begin{figure}[tp]
-\begin{tikzpicture}
- \begin{axis}[
-      height=0.6\textwidth,
-      width=0.8\textwidth,
       title=Moving Average filter,
       title style={at={(0.5,0.94)},anchor=south},
       xlabel=\scriptsize{filter order},
@@ -516,14 +486,68 @@ Haskell types can be allocated in Feldspar.
 \label{fig:measurements-mov-avg}
 \end{figure}
 
+\begin{figure}[tp]
+\begin{tikzpicture}
+ \begin{axis}[
+      height=0.6\textwidth,
+      width=0.8\textwidth,
+      title=FIR filter,
+      title style={at={(0.5,0.94)},anchor=south},
+      xlabel=\scriptsize{filter order},
+      ylabel=s,
+      every axis x label/.style={at={(1,-0.09)},anchor=north east},
+      every axis y label/.style={at={(-0.1,0.65)},anchor=east},
+      legend entries={\scriptsize{C reference},\scriptsize{Pure},\scriptsize{Monadic}},
+      legend style={at={(0.03,0.93)},anchor=north west},
+      cycle list={blue,mark=*\\%
+                  red,mark=square*\\%
+                  brown,mark=+\\%
+                 }
+    ]
+    \addplot shell[prefix=pgfshell_,id=ref]
+        { awk -F'/|,' '/c_fir_ref/ { print $2,$5 }' benchmark/benchmark.csv};
+    \addplot shell[prefix=pgfshell_,id=pure]
+        { awk -F'/|,' '/c_fir_old/ { print $2,$5 }' benchmark/benchmark.csv};
+    \addplot shell[prefix=pgfshell_,id=monadic]
+        { awk -F'/|,' '/c_fir2_bench/ { print $2,$5 }' benchmark/benchmark.csv};
+ \end{axis}
+\end{tikzpicture}
+\caption{Running time of filters compared to reference C implementations.}
+\label{fig:measurements-fir}
+\end{figure}
+
 We have measured the difference between functional and monadic streams
-in Feldspar across three difference benchmarks: moving average, fir-
-and iir filters. Apart from the Feldspar version, we also have a
-handwritten C benchmark to get a baseline for our measurements.
-However, it is not entirely an apples-to-apples comparison since
-the monadic stream implementation keeps the buffer in registers and
-unrolls the loop for updating the buffer. Yet, the measurements give
-some indication of how performant our implementation is.
+in Feldspar on two different benchmarks: moving average and fir
+filter. The measurements have been performed on a MacBook Pro,
+equipped with a 2 GHz Intel Core i7 and 8 GB 1600 MHz DDR3. Only one
+core as been used throughout all benchmarks.
+
+The results for the moving average is shown in figure
+\ref{fig:measurements-mov-avg}. The points labeled "Pure" show the
+results for the purely functional stream representation, while
+"Monadic Buffer" show the results for the monadic streams using a
+cyclic buffer. For small buffer sizes, the monadic version is a clear
+winner but loses as the size of the window grows large. The reason is
+that the cyclic buffer implementation uses the modulus operation
+frequently to make sure that the buffer is presented to the programmer
+with elements in the right order and not shifted. As the window grows
+larger the cost of the modulus operations kill the performance.  The
+third set of points shows the result of an implementation where the
+buffer is kept entirely in registers. It readily outperforms the two
+other versions, and is consistently more than an order of magnitude
+faster than the functional representation.
+
+The fir filter benchmark is presented in figure
+\ref{fig:measurements-fir}. The "Pure" points again show the
+performance of purely functional stream. "Monadic" shows monadic
+streams where the buffer is stored in memory. Just as with the moving
+average benchmark, the monadic stream representation is superior.
+Apart from the Feldspar version, we also have a handwritten C
+benchmark to get a baseline for our measurements.  However, it is not
+entirely an apples-to-apples comparison since the C implementation
+still stores the buffer in memory and uses loops to traverse it. Yet,
+the measurements give some indication of how performant our
+implementation is.
 
 # Relation to Functional Streams
 
