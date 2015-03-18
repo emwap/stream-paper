@@ -306,7 +306,7 @@ map f (Stream init) = Stream $ do
 What follows is a derivation of an efficient implementation of
 `map f . map g`. Each step is annotated with the law used in the
 transformation. In order to get fusion going we will apply
-`map f . map g` to concrete but arbitrary stream `Stream init`.
+`map f . map g` to a concrete but arbitrary stream `Stream init`.
 
 ~~~ {.haskell}
 map f (map g (Stream init))
@@ -455,7 +455,7 @@ Haskell types can be allocated in Feldspar.
 
 Using the monadic stream representation with EDSLs enables another
 trick not available with the functional representation: the buffer can
-be stored entirely in registers. In the versions of the moving average
+be stored entirely in references. In the versions of the moving average
 function we've presented so far the purely functional representation
 uses an immutable array as a buffer while the monadic representation
 uses a mutable cyclic buffer. However, in an EDSL the buffer can be
