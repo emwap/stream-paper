@@ -53,6 +53,12 @@ fir2_bench32 = fir2_bench (fmap value (coeffs 32))
 fir_old :: Pull1 Double -> Pull1 Double -> Pull1 Double
 fir_old cs v = Old.streamAsVector (Old.fir cs) v
 
+mov_avg_bench :: Data Length -> Pull1 Double -> Pull1 Double
+mov_avg_bench l = New.streamAsVector (New.movingAvg l)
+
+mov_avg_old :: Data Length -> Pull1 Double -> Pull1 Double
+mov_avg_old l = Old.streamAsVector (Old.movingAvg l)
+
 loadFunOptsWith "" defaultOptions{platform=c99{values=[]}} ["-optc=-O3", "-optc=-save-temps"]
   [ 'copy_bench
   , 'fir_bench
@@ -65,6 +71,8 @@ loadFunOptsWith "" defaultOptions{platform=c99{values=[]}} ["-optc=-O3", "-optc=
   , 'fir2_bench9
   , 'fir2_bench15
   , 'fir2_bench32
+  , 'mov_avg_bench
+  , 'mov_avg_old
   ]
 
 fir2_benches =
@@ -81,6 +89,7 @@ fir2_benches =
 mkConfig :: FilePath -> Config
 mkConfig report = defaultConfig { forceGC    = True
                                 , reportFile = Just report
+                                , csvFile    = Just "benchmark.csv"
                                 }
 
 setupPlugins :: IO ()
@@ -96,6 +105,8 @@ setupPlugins = do
   _ <- evaluate c_fir2_bench9_builder
   _ <- evaluate c_fir2_bench15_builder
   _ <- evaluate c_fir2_bench32_builder
+  _ <- evaluate c_mov_avg_bench_builder
+  _ <- evaluate c_mov_avg_old_builder
   return ()
 
 mkData ds l = evaluate =<< pack (Prelude.take (fromIntegral l) ds)
@@ -115,10 +126,12 @@ mkComp l b = env (setupData l) $ \ ~(o,d,cs) -> bgroup (show l)
   , bench "c_fir_bench"   (whnfIO $ c_fir_bench_raw cs d o)
   , bench "c_fir_old"     (whnfIO $ c_fir_old_raw cs d o)
   , bench "c_fir2_bench"  (whnfIO $ b d o)
+  , bench "c_mov_avg_bench" (whnfIO $ c_mov_avg_bench_raw l d o)
+  , bench "c_mov_avg_old"   (whnfIO $ c_mov_avg_old_raw l d o)
   ]
 
 main :: IO ()
-main = defaultMainWith (mkConfig "fir_report.html")
+main = defaultMainWith (mkConfig "report.html")
   [ env setupPlugins $ \_ -> bgroup "fir" $ Prelude.zipWith mkComp sizes fir2_benches
   ]
 

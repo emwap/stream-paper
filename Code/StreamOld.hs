@@ -56,6 +56,12 @@ streamAsVector :: (Type b)
                   (Pull1 a -> Pull1 b)
 streamAsVector f vec = thawPull1 $ StreamOld.take (length vec) $
                        f (Stream (\i -> (vec!:(Z:.i),i+1)) 0)
+
+movingAvg :: (Fraction a, RealFloat a)
+          => Data WordN -> Stream (Data a) -> Stream (Data a)
+movingAvg n str = recurrenceIO (replicate1 n 0) str (replicate1 1 0)
+                  (\input _ -> (fromZero $ sum input) / i2f n)
+
 -- streamAsVector f vec = toPull $ arrToManifest (fromList [length vec], StreamOld.take (length vec) $
 --                        f (Stream (\i -> (vec!:(Z:.i),i+1)) 0))
 
