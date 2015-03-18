@@ -727,4 +727,8 @@ to speed up FRP implementations; such investigations are future work.
 \paragraph{\bf EDSLs}
 The stream representation in this paper is used by the stream library in the Feldspar EDSL [@FeldsparIFL2010]. It is also used as an intermediate representation in recent work on adding data flow networks on top of Feldspar [@aronsson2015stream].
 
+# Acknowledgements
+
+This research was funded by the Swedish Foundation for Strategic Research (in the RAWFP project).
+
 # References
