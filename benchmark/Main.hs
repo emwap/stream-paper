@@ -56,6 +56,18 @@ fir_old cs v = Old.streamAsVector (Old.fir cs) v
 mov_avg_bench :: Data Length -> Pull1 Double -> Pull1 Double
 mov_avg_bench l = New.streamAsVector (New.movingAvg l)
 
+mov_avg2_bench :: Length -> Pull1 Double -> Pull1 Double
+mov_avg2_bench l = New.streamAsVector (New.movingAvg2 l)
+
+mov_avg2_bench2  = mov_avg2_bench 2
+mov_avg2_bench3  = mov_avg2_bench 3
+mov_avg2_bench4  = mov_avg2_bench 4
+mov_avg2_bench5  = mov_avg2_bench 5
+mov_avg2_bench8  = mov_avg2_bench 8
+mov_avg2_bench9  = mov_avg2_bench 9
+mov_avg2_bench15 = mov_avg2_bench 15
+mov_avg2_bench32 = mov_avg2_bench 32
+
 mov_avg_old :: Data Length -> Pull1 Double -> Pull1 Double
 mov_avg_old l = Old.streamAsVector (Old.movingAvg l)
 
@@ -73,6 +85,14 @@ loadFunOptsWith "" defaultOptions{platform=c99{values=[]}} ["-optc=-O3", "-optc=
   , 'fir2_bench32
   , 'mov_avg_bench
   , 'mov_avg_old
+  , 'mov_avg2_bench2
+  , 'mov_avg2_bench3
+  , 'mov_avg2_bench4
+  , 'mov_avg2_bench5
+  , 'mov_avg2_bench8
+  , 'mov_avg2_bench9
+  , 'mov_avg2_bench15
+  , 'mov_avg2_bench32
   ]
 
 fir2_benches =
@@ -84,6 +104,17 @@ fir2_benches =
   , c_fir2_bench9_raw
   , c_fir2_bench15_raw
   , c_fir2_bench32_raw
+  ]
+
+mov_avg2_benches =
+  [ c_mov_avg2_bench2_raw
+  , c_mov_avg2_bench3_raw
+  , c_mov_avg2_bench4_raw
+  , c_mov_avg2_bench5_raw
+  , c_mov_avg2_bench8_raw
+  , c_mov_avg2_bench9_raw
+  , c_mov_avg2_bench15_raw
+  , c_mov_avg2_bench32_raw
   ]
 
 mkConfig :: FilePath -> Config
@@ -107,6 +138,14 @@ setupPlugins = do
   _ <- evaluate c_fir2_bench32_builder
   _ <- evaluate c_mov_avg_bench_builder
   _ <- evaluate c_mov_avg_old_builder
+  _ <- evaluate c_mov_avg2_bench2_builder
+  _ <- evaluate c_mov_avg2_bench3_builder
+  _ <- evaluate c_mov_avg2_bench4_builder
+  _ <- evaluate c_mov_avg2_bench5_builder
+  _ <- evaluate c_mov_avg2_bench8_builder
+  _ <- evaluate c_mov_avg2_bench9_builder
+  _ <- evaluate c_mov_avg2_bench15_builder
+  _ <- evaluate c_mov_avg2_bench32_builder
   return ()
 
 mkData ds l = evaluate =<< pack (Prelude.take (fromIntegral l) ds)
@@ -121,18 +160,19 @@ setupData len = do
   return (o,d,cs)
 
 -- mkComp :: Length -> Benchmark
-mkComp l b = env (setupData l) $ \ ~(o,d,cs) -> bgroup (show l)
+mkComp l b m = env (setupData l) $ \ ~(o,d,cs) -> bgroup (show l)
   [ bench "c_fir_ref"     (whnfIO $ c_fir_ref_raw cs d o)
   , bench "c_fir_bench"   (whnfIO $ c_fir_bench_raw cs d o)
   , bench "c_fir_old"     (whnfIO $ c_fir_old_raw cs d o)
   , bench "c_fir2_bench"  (whnfIO $ b d o)
   , bench "c_mov_avg_bench" (whnfIO $ c_mov_avg_bench_raw l d o)
   , bench "c_mov_avg_old"   (whnfIO $ c_mov_avg_old_raw l d o)
+  , bench "c_mov_avg2_bench" (whnfIO $ m d o)
   ]
 
 main :: IO ()
 main = defaultMainWith (mkConfig "report.html")
-  [ env setupPlugins $ \_ -> bgroup "fir" $ Prelude.zipWith mkComp sizes fir2_benches
+  [ env setupPlugins $ \_ -> bgroup "fir" $ Prelude.zipWith3 mkComp sizes fir2_benches mov_avg2_benches
   ]
 
 foreign import ccall unsafe "fir_ref.h fir_ref" c_fir_ref_raw

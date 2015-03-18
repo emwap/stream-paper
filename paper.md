@@ -495,19 +495,21 @@ Haskell types can be allocated in Feldspar.
       ylabel=s,
       every axis x label/.style={at={(1,-0.09)},anchor=north east},
       every axis y label/.style={at={(-0.1,0.65)},anchor=east},
-      legend entries={\scriptsize{Pure},\scriptsize{Monadic}},
+      legend entries={\scriptsize{Pure},\scriptsize{Monadic Buffer},\scriptsize{Monadic Reference}},
       legend style={at={(0.03,0.93)},anchor=north west},
       cycle list={blue,mark=*\\%
                   red,mark=square*\\%
                   brown,mark=+\\%
                  }
     ]
-%    \addplot shell[prefix=pgfshell_,id=ref]
-%        { awk -F'/|,' '/c_fir_ref/ { print $2,$5 }' benchmark/benchmark.csv};
-    \addplot shell[prefix=pgfshell_,id=pure]
+%    \addplot shell[prefix=pgfshell_,id=avg_ref]
+%        { awk -F'/|,' '/c_mov_avg_ref/ { print $2,$5 }' benchmark/benchmark.csv};
+    \addplot shell[prefix=pgfshell_,id=avg_pure]
         { awk -F'/|,' '/c_mov_avg_old/ { print $2,$5 }' benchmark/benchmark.csv};
-    \addplot shell[prefix=pgfshell_,id=monadic]
+    \addplot shell[prefix=pgfshell_,id=avg_buffer]
         { awk -F'/|,' '/c_mov_avg_bench/ { print $2,$5 }' benchmark/benchmark.csv};
+    \addplot shell[prefix=pgfshell_,id=avg_monadic]
+        { awk -F'/|,' '/c_mov_avg2_bench/ { print $2,$5 }' benchmark/benchmark.csv};
  \end{axis}
 \end{tikzpicture}
 \caption{Running time of filters compared to reference C implementations.}
