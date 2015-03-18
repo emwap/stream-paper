@@ -679,7 +679,7 @@ representation of streams has the advantage of being
 usable even in an EDSL context.
 
 \paragraph{\bf Coiterative streams}
-A coiterative representation of streams makes it possible to avoid recursion in the definition of streams and in functions defined for streams [@Caspi19981]. Our initial representation in section \ref{the-problem} was based on coiteration.
+A coiterative representation of streams makes it possible to avoid recursion in the definition of streams and in functions defined for streams [@Caspi19981]. Our initial representation in [The Problem] section was based on coiteration.
 
 The stream fusion framework [@coutts2007stream] builds on the following coiterative representation:
 
