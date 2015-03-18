@@ -467,15 +467,45 @@ Haskell types can be allocated in Feldspar.
                  }
     ]
     \addplot shell[prefix=pgfshell_,id=ref]
-        { awk -F'/|,' '/c_fir_ref/ { print $2,$5 }' benchmark/fir.csv};
+        { awk -F'/|,' '/c_fir_ref/ { print $2,$5 }' benchmark/benchmark.csv};
     \addplot shell[prefix=pgfshell_,id=pure]
-        { awk -F'/|,' '/c_fir_old/ { print $2,$5 }' benchmark/fir.csv};
+        { awk -F'/|,' '/c_fir_old/ { print $2,$5 }' benchmark/benchmark.csv};
     \addplot shell[prefix=pgfshell_,id=monadic]
-        { awk -F'/|,' '/c_fir2_bench/ { print $2,$5 }' benchmark/fir.csv};
+        { awk -F'/|,' '/c_fir2_bench/ { print $2,$5 }' benchmark/benchmark.csv};
  \end{axis}
 \end{tikzpicture}
 \caption{Running time of filters compared to reference C implementations.}
-\label{fig:measurements}
+\label{fig:measurements-fir}
+\end{figure}
+
+\begin{figure}[tp]
+\begin{tikzpicture}
+ \begin{axis}[
+      height=0.6\textwidth,
+      width=0.8\textwidth,
+      title=Moving Average filter,
+      title style={at={(0.5,0.94)},anchor=south},
+      xlabel=\scriptsize{filter order},
+      ylabel=s,
+      every axis x label/.style={at={(1,-0.09)},anchor=north east},
+      every axis y label/.style={at={(-0.1,0.65)},anchor=east},
+      legend entries={\scriptsize{Pure},\scriptsize{Monadic}},
+      legend style={at={(0.03,0.93)},anchor=north west},
+      cycle list={blue,mark=*\\%
+                  red,mark=square*\\%
+                  brown,mark=+\\%
+                 }
+    ]
+%    \addplot shell[prefix=pgfshell_,id=ref]
+%        { awk -F'/|,' '/c_fir_ref/ { print $2,$5 }' benchmark/benchmark.csv};
+    \addplot shell[prefix=pgfshell_,id=pure]
+        { awk -F'/|,' '/c_mov_avg_old/ { print $2,$5 }' benchmark/benchmark.csv};
+    \addplot shell[prefix=pgfshell_,id=monadic]
+        { awk -F'/|,' '/c_mov_avg_bench/ { print $2,$5 }' benchmark/benchmark.csv};
+ \end{axis}
+\end{tikzpicture}
+\caption{Running time of filters compared to reference C implementations.}
+\label{fig:measurements-mov-avg}
 \end{figure}
 
 We have measured the difference between functional and monadic streams
