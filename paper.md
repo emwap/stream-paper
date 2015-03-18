@@ -577,16 +577,16 @@ winner but loses as the size of the window grows large. The reason is
 that the cyclic buffer implementation uses the modulus operation
 frequently to make sure that the buffer is presented to the programmer
 with elements in the right order and not shifted. As the window grows
-larger the cost of the modulus operations kill the performance.  The
+larger the cost of the modulus operations kills the performance.  The
 third set of points shows the result of an implementation where the
-buffer is kept entirely in registers. That version readily outperforms
+buffer is kept entirely in references. That version readily outperforms
 the two other versions, and is consistently more than an order of
 magnitude faster than the functional representation.
 
 The fir filter benchmark is presented in figure
 \ref{fig:measurements-fir}. The "Pure" points again show the
 performance of purely functional stream. "Monadic" shows monadic
-streams where the buffer is stored in memory. Just as with the moving
+streams where the buffer is stored in references. Just as with the moving
 average benchmark, the monadic stream representation is superior.
 Apart from the Feldspar version, we also have a handwritten C
 benchmark to get a baseline for our measurements.  However, it is not
