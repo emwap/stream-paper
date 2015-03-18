@@ -480,7 +480,7 @@ recurrenceS ii (Stream init) mkExpr = Stream $ do
              return $ mkExpr ib
       return b
   where
-    pBuf rs a = zipWithM (\r1 r2 -> getRef r1 >>= setRef r2) 
+    pBuf rs a = zipWithM (\r1 r2 -> getRef r1 >>= setRef r2)
                          (tail $ reverse rs) (reverse rs)
              >> setRef (head rs) a
     wBuf rs f = mapM getRef rs >>= f
@@ -723,5 +723,8 @@ expressivity, we use streams in the context of digital signal
 processing where we are happy to trade expressivity for efficiency.
 Perhaps some of the techniques presented in this paper can be applied
 to speed up FRP implementations; such investigations are future work.
+
+\paragraph{\bf EDSLs}
+The stream representation in this paper is used by the stream library in the Feldspar EDSL [@FeldsparIFL2010]. It is also used as an intermediate representation in recent work on adding data flow networks on top of Feldspar [@aronsson2015stream].
 
 # References
