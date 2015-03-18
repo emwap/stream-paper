@@ -198,8 +198,8 @@ the imperative features of the new monadic stream representation.
 
 ~~~ {.haskell}
 movingAvg :: Int -> Stream Double -> Stream Double
-movingAvg n str = recurrence (listArray (0,n-1) (replicate n 0.0)) str
-                   (\input -> sum (elems input) / n)
+movingAvg n s = recurrence (listArray (0,n-1) (replicate n 0.0)) s
+                   (\input -> sum (elems input) / fromIntegral n)
 
 recurrence :: Array Int a -> Stream a ->
               (Array Int a -> b) ->
