@@ -370,7 +370,7 @@ Stream $ do
     return (f (g a))
 ~~~
 
-The final result is as efficient as one can possible hope for.
+The final result is as efficient as one can possibly hope for.
 
 Fusing combinators other than `map` follows a similar pattern.
 
@@ -708,7 +708,7 @@ The fusion framework in Conduits relies on GHC rules to rewrite recursive stream
 data Stream m o r = forall s . Stream (s -> m (Step s o r)) (m s)
 ~~~
 
-This type is quite close to our `Stream` representation: the initialization action `m s` can be used to initialize mutable state, and the step function can be used to mutate this state. The main difference is that there is still immutable state of type `s` passed around, which is unnecessary if we put all the state in the monad.
+This type is quite close to our `Stream` representation: the initialization action of type `m s` can be used to initialize mutable state, and the step function can be used to mutate this state. The main difference is that there is still immutable state of type `s` passed around, which is unnecessary if we put all the state in the monad.
 
 \paragraph{\bf FRP}
 
