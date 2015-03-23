@@ -120,7 +120,7 @@ window sizes.
 
 Similar problems appear for many applications of streams, such as
 digital fir and iir filters. What we would like is a representation of
-streams were we can use mutation to efficiently implement such
+streams where we can use mutation to efficiently implement such
 functions.
 
 # Efficient Monadic Streams
