@@ -73,8 +73,8 @@ functional stream representation. Our contributions are:
 
 We have used our new monadic formulation of stream in Feldspar and
 will evaluate the improvement in the context of Feldspar. However, we
-will for the most part use Haskell code to demonstrate the technique,
-in order to make the presentation more accessible.
+will use Haskell code to demonstrate the technique in order to make
+the presentation more accessible.
 
 # The Problem
 
@@ -107,6 +107,16 @@ fused. Copying can be avoided to some extent by using smarter window
 representations. The smart representations tend to have a high
 constant overhead making them unsuitable for the common case of small
 window sizes.
+
+~~~ {.C}
+  copy(window, zeros);
+  TODO: Add relevant fragments from the generated code.
+  while (..) {
+    ...
+    copy(tmpbuf, window, len);
+    copy(window, tmpbuf, len - 1);
+  }
+~~~
 
 Similar problems appear for many applications of streams, such as
 digital fir and iir filters. What we would like is a representation of
@@ -243,7 +253,18 @@ input stream.
 
 The function `movingAvg` uses `recurrence` to provide sliding windows
 of the input stream and passes a function to compute the average of
-a window. The initial window only contains zeros.
+a window. The initial window only contains zeros. The generated code
+performs the window update through mutation:
+
+~~~ {.C}
+  copy(window, zeros);
+  TODO: Add relevant fragments from the generated code.
+  while (..) {
+    ...
+    copy(window, window, len - 1);
+  }
+~~~
+
 
 More advanced digital filters, like fir filters, can be
 implemented in a similar fashion to the moving average:
@@ -387,12 +408,26 @@ foo arr = remember n $ .. $ cycle arr
 ~~~
 
 The generated code for this pattern contains one loop index
-originating from `cycle` and one from `remember`. Good C compilers might remove multiple loop indices but relying on the
+originating from `cycle` and one from `remember`:
+
+~~~ {.C}
+int i1 = 0;
+int i2 = 0;
+bool cond = true;
+TODO: Insert generated code.
+while (cond) {
+  ...
+  i1++;
+  i2++;
+  cond = i1 < n && i2 < n;
+}
+~~~
+
+Good C compilers might remove multiple loop indices but relying on the
 C compiler to perform that optimization on signal processing
 applications is a risk. The mere presence of multiple loop indices
 might prevent earlier optimizations at the functional level from
 kicking in.
-
 
 Parameterising the stream representation with the loop
 counter solves the problem:
@@ -417,10 +452,9 @@ remember len (Stream init) = do
 ~~~
 
 The key difference from the previous version is that the loop variable
-`i` is fed to the step function `next`.
-
-Functions like `cycle` can now take advantage of the provided loop
-index, and don't need to create their own loop variables:
+`i` is fed to the step function `next` Functions like `cycle` can now
+take advantage of the provided loop index, and don't need to create
+their own loop variables:
 
 ~~~ {.haskell}
 cycle :: Array Int a -> Stream a
@@ -431,7 +465,17 @@ cycle arr = Stream $ do
 ~~~
 
 The new code for `cycle` is considerably shorter and will also
-generate better code.
+generate better code:
+
+~~~ {.C}
+void fun(int i, ..) {
+  TODO: Insert generated code.
+  while (i < n) {
+    ...
+    i++;
+  }
+}
+~~~
 
 # Streams for EDSLs
 
