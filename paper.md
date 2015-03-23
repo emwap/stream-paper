@@ -57,9 +57,9 @@ using mutation while retaining the advantages of the
 functional stream representation. Our contributions are:
 
 * A new stream representation, `M (M a)`, for some monad `M` which
-  supports mutation. The new representation, while relying
-  on imperative features, can still be given a functional interface,
-  just like the functional stream representation.
+  supports mutation. Our representation combines the functional
+  interface of the previous representation with the efficiency of
+  imperative updates.
 
 * We show how to optimize the representation to eliminate duplicate
   loop variables.
