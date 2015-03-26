@@ -71,10 +71,12 @@ functional stream representation. Our contributions are:
   magnitude compared to the functional representation when using our
   monadic representation.
 
-We have used our new monadic formulation of stream in Feldspar and
-will evaluate the improvement in the context of Feldspar. However, we
-will use Haskell code to demonstrate the technique in order to make
-the presentation more accessible.
+We have used our new monadic formulation of stream in Feldspar
+[@FeldsparIFL2010] and will evaluate the improvement in that
+context. The representation is applicable in other languages as well
+though so we will use Haskell code to demonstrate the technique. As an
+added benefit we hope that will make the presentation accessible to a
+wider audience.
 
 # The Problem
 
@@ -544,6 +546,13 @@ section below.
 
 # Evaluation
 
+We evaluate the performance of our improved representation using
+Feldspar, a staged embedded domain specific language targeting digital
+signal processing algorithms. Feldspar uses Haskell as host language
+so the syntax is similar. The primary differences from the perspective
+of the performance evaluation is that Feldspar is a strict language
+and fusion of streams is guaranteed by construction.
+
 \begin{figure}[tp]
 \begin{tikzpicture}
  \begin{axis}[
@@ -607,10 +616,10 @@ section below.
 \end{figure}
 
 We have measured the difference between functional and monadic streams
-in Feldspar on two different benchmarks: moving average and fir
-filter. The measurements have been performed on a MacBook Pro,
-equipped with a 2 GHz Intel Core i7 and 8 GB 1600 MHz DDR3. Only one
-core as been used throughout all benchmarks.
+on two different benchmarks: moving average and fir filter. The
+measurements have been performed on a MacBook Pro, equipped with a 2
+GHz Intel Core i7 and 8 GB 1600 MHz DDR3. Only one core as been used
+throughout all benchmarks.
 
 The results for the moving average is shown in figure
 \ref{fig:measurements-mov-avg}. The points labeled "Pure" show the
