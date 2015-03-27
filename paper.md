@@ -23,7 +23,8 @@ abstract: |
   Our representation enables further optimizations: we show how to
   remove duplicate loop variables.
 
-  Our measurements show that our new monadic representation
+  The representation has been evaluated in the context of the Feldspar
+  embedded DSL, and our measurements show that our new monadic representation
   consistently outperforms the functional representation by almost
   an order of magnitude.
 ---
@@ -61,22 +62,21 @@ functional stream representation. Our contributions are:
   interface of the previous representation with the efficiency of
   imperative updates.
 
-* We show how to optimize the representation to eliminate duplicate
-  loop variables.
-
 * We show how our new stream representation can be used in EDSLs.
   It is currently used in the Feldspar language.
 
+* We show how to optimize the representation to eliminate duplicate
+  loop variables.
+
 * We demonstrate a performance advantage of almost an order of
   magnitude compared to the functional representation when using our
-  monadic representation.
+  monadic representation in Feldspar.
 
-We have used our new monadic formulation of stream in Feldspar
-[@FeldsparIFL2010] and will evaluate the improvement in that
-context. The representation is applicable in other languages as well
-though so we will use Haskell code to demonstrate the technique. As an
-added benefit we hope that will make the presentation accessible to a
-wider audience.
+The new monadic formulation of streams is applicable to any language with a monad for mutable effects. We will show an implementation in Haskell based on `IO` (in section [Efficient Monadic Streams]) as well as an implementation in the Feldspar [@FeldsparIFL2010] EDSL (in section [Streams for EDSLs]). It turns out to be much easier to demonstrate the advantages of the new stream representation in Feldspar, because it generates simple C code where excessive copying is easy to see and measure. Therefore this paper will make a compromise:\ for presentation purposes, we use the Haskell implementation; for evaluation purposes we use the Feldspar implementation.
+
+All examples are additionally available as Feldspar code[^FeldsparCode]. The Feldspar code is conceptually very similar to the Haskell code shown in this paper.
+
+[^FeldsparCode]: <http://github.com/TODO>
 
 # The Problem
 
@@ -109,6 +109,8 @@ fused. Copying can be avoided to some extent by using smarter window
 representations. The smart representations tend to have a high
 constant overhead making them unsuitable for the common case of small
 window sizes.
+
+We see the problem clearly in the corresponding Feldspar implementation, which results in the following C code:
 
 ~~~ {.C}
   copy(window, zeros);
@@ -255,8 +257,9 @@ input stream.
 
 The function `movingAvg` uses `recurrence` to provide sliding windows
 of the input stream and passes a function to compute the average of
-a window. The initial window only contains zeros. The generated code
-performs the window update through mutation:
+a window. The initial window only contains zeros. In the generated
+code from the corresponding Feldspar implementation, we see that the
+window update is performed through mutation:
 
 ~~~ {.C}
   copy(window, zeros);
@@ -409,7 +412,7 @@ loop. Consider the following pattern:
 foo arr = remember n $ .. $ cycle arr
 ~~~
 
-The generated code for this pattern contains one loop index
+The Feldspar-generated code for this pattern contains one loop index
 originating from `cycle` and one from `remember`:
 
 ~~~ {.C}
@@ -492,12 +495,25 @@ rewriting explained in the [Fusion] section happens automatically, no
 extra code needs to be written in order to achieve the optimization.
 
 Feldspar [@FeldsparIFL2010] has a stream library that uses a monadic
-embedding. The stream library is almost identical to the Haskell
-library presented in Section [Efficient Monadic Streams]. The stream
-type is the same except using a different embedded monad. The only
-difference for the programmer is that Feldspar requires some
-constraints on functions which allocate memory, since not all
-Haskell types can be allocated in Feldspar.
+embedding. Instead of the `IO` monad, it uses Feldspar's `M` monad [@genericmonads11] for mutable effects:
+
+~~~ {.haskell}
+data Stream a = Stream (M (M a))
+~~~
+
+The Feldspar implementation of a simple function like `map` is identical to the Haskell definition in this paper. For more complicated functions, the difference is mainly in the use of different types and different names for similar functions. For example, `cycle` is defined as follows in Feldspar:
+
+~~~ {.haskell}
+cycle :: Syntax a => Pull DIM1 a -> Stream a
+cycle vec = Stream $ do
+  c <- newRef (0 :: Data Index)
+  loop $ do
+    i <- getRef c
+    setRef c ((i + 1) `rem` length vec)
+    return (vec ! (Z :. i))
+~~~
+
+A notable difference is the `Syntax` constraint on the type of the elements in the Feldspar implementation. This constraint is to restrict the function to elements that can be stored in memory when generating C code.
 
 Using the monadic stream representation with EDSLs enables another
 trick not available with the functional representation: the buffer can
