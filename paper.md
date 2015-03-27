@@ -121,7 +121,7 @@ window sizes.
 ~~~
 
 Similar problems appear for many applications of streams, such as
-digital fir and iir filters. What we would like is a representation of
+digital FIR and IIR filters. What we would like is a representation of
 streams where we can use mutation to efficiently implement such
 functions.
 
@@ -268,7 +268,7 @@ performs the window update through mutation:
 ~~~
 
 
-More advanced digital filters, like fir filters, can be
+More advanced digital filters, like FIR filters, can be
 implemented in a similar fashion to the moving average:
 
 ~~~ {.haskell}
@@ -278,7 +278,7 @@ fir b inp = recurrence (listArray (0,l-1) (replicate l 0)) inp
   where l = rangeSize (bounds b)
 ~~~
 
-Implementing iir filters requires a somewhat more sophisticated
+Implementing IIR filters requires a somewhat more sophisticated
 version of `recurrence` which also has a cyclic buffer for the
 elements of the output stream.
 
@@ -616,7 +616,7 @@ and fusion of streams is guaranteed by construction.
 \end{figure}
 
 We have measured the difference between functional and monadic streams
-on two different benchmarks: moving average and fir filter. The
+on two different benchmarks: moving average and FIR filter. The
 measurements have been performed on a MacBook Pro, equipped with a 2
 GHz Intel Core i7 and 8 GB 1600 MHz DDR3. Only one core as been used
 throughout all benchmarks.
@@ -636,7 +636,7 @@ buffer is kept entirely in references. That version readily outperforms
 the two other versions, and is consistently more than an order of
 magnitude faster than the functional representation.
 
-The fir filter benchmark is presented in figure
+The FIR filter benchmark is presented in figure
 \ref{fig:measurements-fir}. The "Pure" points again show the
 performance of purely functional stream. "Monadic" shows monadic
 streams where the buffer is stored in references. Just as with the moving
