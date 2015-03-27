@@ -178,11 +178,10 @@ used to keep track of what element in the array to read from.
 cycle :: Array Int a -> Stream a
 cycle arr = Stream $ do
   r <- newIORef 0
-  let l = length arr
   loop $ do
     i <- readIORef r
-    writeIORef r (i+1)
-    return (arr!(i `mod` l))
+    writeIORef r ((i+1) `mod` length arr)
+    return (arr!i)
 ~~~
 
 An infinite stream cannot be stored in memory. Saving a prefix of an
