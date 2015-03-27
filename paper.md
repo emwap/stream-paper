@@ -540,7 +540,7 @@ of values to a continuation. It is used similarly to `withBuf` in the
 cyclic buffer implementation. The workhorse in this implementation is
 `pBuf` which conceptually rotates the buffer one step and adds the
 latest element. It is achieved by shifting the values between
-registers. This version is fast as we will see in the [Evaluation]
+references. This version is fast as we will see in the [Evaluation]
 section below.
 
 
