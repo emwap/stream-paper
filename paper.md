@@ -72,9 +72,9 @@ functional stream representation. Our contributions are:
   magnitude compared to the functional representation when using our
   monadic representation in Feldspar.
 
-The new monadic formulation of streams is applicable to any language with a monad for mutable effects. We will show an implementation in Haskell based on `IO` (in section [Efficient Monadic Streams]) as well as an implementation in the Feldspar [@FeldsparIFL2010] EDSL (in section [Streams for EDSLs]). It turns out to be much easier to demonstrate the advantages of the new stream representation in Feldspar, because it generates simple C code where excessive copying is easy to see and measure. Therefore this paper will make a compromise:\ for presentation purposes, we use the Haskell implementation; for evaluation purposes we use the Feldspar implementation.
+The new monadic formulation of streams is applicable to any language with a monad for mutable effects. We show an implementation in Haskell based on `IO` in section [Efficient Monadic Streams] as well as an implementation in the Feldspar [@FeldsparIFL2010] EDSL in section [Streams for EDSLs]. The advantages of the new stream representation are easier to demonstrate in Feldspar because the generated C code makes excessive copying both easy to see and measure. We compromise by using the Haskell implementation for presentation purposes and the Feldspar implementation for the performance evaluation.
 
-All examples are additionally available as Feldspar code[^FeldsparCode]. The Feldspar code is conceptually very similar to the Haskell code shown in this paper.
+All examples are additionally available as Feldspar code[^FeldsparCode]. The Feldspar code is conceptually similar to the Haskell code shown in this paper.
 
 [^FeldsparCode]: <http://github.com/TODO>
 
@@ -110,7 +110,7 @@ representations. The smart representations tend to have a high
 constant overhead making them unsuitable for the common case of small
 window sizes.
 
-We see the problem clearly in the corresponding Feldspar implementation, which results in the following C code:
+We see the problem clearly in the generated C code from the corresponding Feldspar implementation:
 
 ~~~ {.C}
   copy(window, zeros);
