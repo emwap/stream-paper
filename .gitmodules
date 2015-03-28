@@ -1,6 +1,6 @@
 [submodule "feldspar-language"]
-	path = benchmark/feldspar-language
+	path = feldspar-language
 	url = git@github.com:Feldspar/feldspar-language
 [submodule "feldspar-compiler"]
-	path = benchmark/feldspar-compiler
+	path = feldspar-compiler
 	url = git@github.com:Feldspar/feldspar-compiler
