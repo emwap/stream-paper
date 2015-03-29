@@ -14,7 +14,7 @@ import Control.DeepSeq (NFData(..))
 
 import Feldspar
 import Feldspar.Vector
-import Feldspar.Compiler (defaultOptions,Options(..))
+import Feldspar.Compiler (defaultOptions,Options(..),icompile)
 import Feldspar.Compiler.Backend.C.Options (Platform(..))
 import Feldspar.Compiler.Backend.C.Platforms (c99)
 import Feldspar.Compiler.Plugin (loadFunOptsWith,pack)
@@ -22,6 +22,7 @@ import Feldspar.Compiler.Marshal
 
 import Feldspar.Stream as New
 import StreamOld as Old
+import IMonadicStream as I
 
 sizes :: [Length]
 sizes = [2,3,4,5,8,9,15,32]
@@ -53,6 +54,22 @@ fir2_bench32 = fir2_bench (fmap value (coeffs 32))
 fir_old :: Pull1 Double -> Pull1 Double -> Pull1 Double
 fir_old cs v = Old.streamAsVector (Old.fir cs) v
 
+firI_bench :: Pull1 Double -> Pull1 Double -> Pull1 Double
+firI_bench cs v = I.streamAsVector (I.fir cs) v
+
+firI2_bench :: [Data Double] -> Pull1 Double -> Pull1 Double
+firI2_bench cs v = New.streamAsVector (New.fir2 cs) v
+
+firI2_bench2  = firI2_bench (fmap value (coeffs 2))
+firI2_bench3  = firI2_bench (fmap value (coeffs 3))
+firI2_bench4  = firI2_bench (fmap value (coeffs 4))
+firI2_bench5  = firI2_bench (fmap value (coeffs 5))
+firI2_bench8  = firI2_bench (fmap value (coeffs 8))
+firI2_bench9  = firI2_bench (fmap value (coeffs 9))
+firI2_bench15 = firI2_bench (fmap value (coeffs 15))
+firI2_bench32 = firI2_bench (fmap value (coeffs 32))
+
+
 mov_avg_bench :: Data Length -> Pull1 Double -> Pull1 Double
 mov_avg_bench l = New.streamAsVector (New.movingAvg l)
 
@@ -83,6 +100,15 @@ loadFunOptsWith "" defaultOptions{platform=c99{values=[]}} ["-optc=-O3", "-optc=
   , 'fir2_bench9
   , 'fir2_bench15
   , 'fir2_bench32
+  , 'firI_bench
+  , 'firI2_bench2
+  , 'firI2_bench3
+  , 'firI2_bench4
+  , 'firI2_bench5
+  , 'firI2_bench8
+  , 'firI2_bench9
+  , 'firI2_bench15
+  , 'firI2_bench32
   , 'mov_avg_bench
   , 'mov_avg_old
   , 'mov_avg2_bench2
@@ -165,6 +191,7 @@ mkComp l b m = env (setupData l) $ \ ~(o,d,cs) -> bgroup (show l)
   , bench "c_fir_bench"   (whnfIO $ c_fir_bench_raw cs d o)
   , bench "c_fir_old"     (whnfIO $ c_fir_old_raw cs d o)
   , bench "c_fir2_bench"  (whnfIO $ b d o)
+  , bench "c_firI_bench"  (whnfIO $ c_firI_bench_raw cs d o)
   , bench "c_mov_avg_bench" (whnfIO $ c_mov_avg_bench_raw l d o)
   , bench "c_mov_avg_old"   (whnfIO $ c_mov_avg_old_raw l d o)
   , bench "c_mov_avg2_bench" (whnfIO $ m d o)
