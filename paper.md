@@ -144,8 +144,8 @@ Why does the representation have two levels of monads? The key to
 understanding this representation is that the outer monadic
 computation performs initialization and is only meant to be called
 once. The outer monadic computation returns a new monadic
-computation of type `M a`. This inner computation is called once for
-each element in the stream.
+computation of type `IO a`. Repeatedly calling this inner
+computation produces the elements of the stream.
 
 Our new monadic representation of streams can still be given an API
 which is functional in flavour and similar to what a programmer would
@@ -280,7 +280,7 @@ fir b inp = recurrence (listArray (0,l-1) (replicate l 0)) inp
   where l = rangeSize (bounds b)
 ~~~
 
-Implementing IIR filters requires a somewhat more sophisticated
+Implementing IIR filters requires a
 version of `recurrence` which also has a cyclic buffer for the
 elements of the output stream.
 
