@@ -563,12 +563,13 @@ section below.
 
 # Evaluation
 
-We evaluate the performance of our improved representation using
+We evaluate the performance of our monadic representation using
 Feldspar, a staged embedded domain specific language targeting digital
-signal processing algorithms. Feldspar uses Haskell as host language
-so the syntax is similar. The primary differences from the perspective
+signal processing algorithms. Feldspar is embedded in Haskell, and
+its stream library is conceptually similar to the code shown in this paper.
+The primary differences from the perspective
 of the performance evaluation is that Feldspar is a strict language
-and fusion of streams is guaranteed by construction.
+and that much of the overhead due to high-level data types like `Stream` is reduced at compile time.
 
 \begin{figure}[tp]
 \begin{tikzpicture}
