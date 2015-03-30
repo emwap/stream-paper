@@ -797,6 +797,21 @@ to speed up FRP implementations; such investigations are future work.
 \paragraph{\bf EDSLs}
 The stream representation in this paper is used by the stream library in the Feldspar EDSL [@FeldsparIFL2010]. It is also used as an intermediate representation in recent work on adding data flow networks on top of Feldspar [@aronsson2015stream].
 
+# Conclusions
+
+This paper presents a new monadic stream representation. It is
+motivated by algorithms in digital signal processing which require
+mutation to be implemented efficiently. Somewhat surprisingly, our
+measurements show that a straight-forward mutable implementation using
+a cyclic buffer is often slower than a purely functional copying
+implementation. However, the monadic representation enables a much
+more important optimization: keeping the buffer in registers and
+unrolling the loop. For typical filter orders this implementation
+beats the handwritten C implementation, although performance degrades
+as when parts of the buffer has to be stored in memory. Clearly,
+the implementation of a filter has to be chosen depending on its
+order.
+
 # Acknowledgements
 
 This research was funded by the Swedish Foundation for Strategic Research (in the RAWFP project).
