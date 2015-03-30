@@ -642,29 +642,28 @@ throughout all benchmarks.
 The results for the moving average is shown in figure
 \ref{fig:measurements-mov-avg}. The points labeled "Pure" show the
 results for the purely functional stream representation, while
-"Monadic Buffer" show the results for the monadic streams using a
-cyclic buffer. For small buffer sizes, the monadic version is a clear
-winner but loses as the size of the window grows large. The reason is
+the "Monadic Buffer" points show the results for the monadic streams using a
+cyclic buffer. For small buffer sizes, the monadic buffer version is slightly
+better but loses as the size of the window grows large. The reason is
 that the cyclic buffer implementation uses the modulus operation
 frequently to make sure that the buffer is presented to the programmer
 with elements in the right order and not shifted. As the window grows
 larger the cost of the modulus operations kills the performance.  The
 third set of points shows the result of an implementation where the
-buffer is kept entirely in references. That version readily outperforms
-the two other versions, and is consistently more than an order of
-magnitude faster than the functional representation.
+buffer is kept entirely in references (see [Streams for EDSLs]). That version readily outperforms
+the two other versions, and is consistently at least $4\times$ faster than the functional representation.
 
 The FIR filter benchmark is presented in figure
 \ref{fig:measurements-fir}. The "Pure" points again show the
 performance of purely functional stream. "Monadic" shows monadic
-streams where the buffer is stored in references. Just as with the moving
-average benchmark, the monadic stream representation is superior.
+streams where the buffer is stored in references.
+The monadic stream representation is superior up to filter orders around 50.
 Apart from the Feldspar version, we also have a handwritten C
 benchmark to get a baseline for our measurements.  However, it is not
 entirely an apples-to-apples comparison since the C implementation
 still stores the buffer in memory and uses loops to traverse it. Yet,
 the measurements give some indication of how performant our
-implementation is.
+implementation is. For filter orders below 20 it pays off to unroll the loops and store the buffer in references.
 
 # Relation to Functional Streams
 
@@ -806,7 +805,7 @@ mutation to be implemented efficiently. Somewhat surprisingly, our
 measurements show that a straight-forward mutable implementation using
 a cyclic buffer is often slower than a purely functional copying
 implementation. However, the monadic representation enables a much
-more important optimization: keeping the buffer in registers and
+more important optimization: keeping the buffer in references and
 unrolling the loop. For typical filter orders this implementation
 beats a handwritten C implementation, although performance degrades
 when parts of the buffer has to be stored in memory. Clearly,
