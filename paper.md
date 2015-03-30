@@ -807,8 +807,8 @@ a cyclic buffer is often slower than a purely functional copying
 implementation. However, the monadic representation enables a much
 more important optimization: keeping the buffer in registers and
 unrolling the loop. For typical filter orders this implementation
-beats the handwritten C implementation, although performance degrades
-as when parts of the buffer has to be stored in memory. Clearly,
+beats a handwritten C implementation, although performance degrades
+when parts of the buffer has to be stored in memory. Clearly,
 the implementation of a filter has to be chosen depending on its
 order.
 
