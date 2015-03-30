@@ -799,6 +799,6 @@ The stream representation in this paper is used by the stream library in the Fel
 
 # Acknowledgements
 
-This research was funded by the Swedish Foundation for Strategic Research (in the RAWFP project).
+This research was funded by the Swedish Foundation for Strategic Research (in the RAWFP project) and the Swedish Research Council.
 
 # References
