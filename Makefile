@@ -5,7 +5,7 @@ paper.pdf: paper.tex
 paper.tex: paper.md Makefile benchmark/benchmark.csv
 	pandoc paper.md -o paper.tex -s --tab-stop=2 --template=latex.template --bibliography=feldspar.bib
 
-bench benchmark/benchmark.csv: benchmark/Main.hs
+bench: benchmark/Main.hs
 	cabal build benchmark
 	@-$(RM) benchmark/benchmark.csv
 	./dist/build/benchmark/benchmark --csv=benchmark/benchmark.csv
