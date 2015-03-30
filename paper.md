@@ -613,17 +613,17 @@ and fusion of streams is guaranteed by construction.
       ylabel=s,
       every axis x label/.style={at={(1,-0.09)},anchor=north east},
       every axis y label/.style={at={(-0.1,0.65)},anchor=east},
-      legend entries={\scriptsize{C reference},\scriptsize{Pure},\scriptsize{Monadic}},
+      legend entries={\scriptsize{Pure},\scriptsize{C reference},\scriptsize{Monadic}},
       legend style={at={(0.03,0.93)},anchor=north west},
       cycle list={blue,mark=*\\%
                   red,mark=square*\\%
                   brown,mark=+\\%
                  }
     ]
-    \addplot shell[prefix=pgfshell_,id=ref]
-        { awk -F'/|,' '/c_fir_ref/ { print $2,$5 }' benchmark/benchmark.csv};
     \addplot shell[prefix=pgfshell_,id=pure]
         { awk -F'/|,' '/c_fir_old/ { print $2,$5 }' benchmark/benchmark.csv};
+    \addplot shell[prefix=pgfshell_,id=ref]
+        { awk -F'/|,' '/c_fir_ref/ { print $2,$5 }' benchmark/benchmark.csv};
     \addplot shell[prefix=pgfshell_,id=monadic]
         { awk -F'/|,' '/c_fir2_bench/ { print $2,$5 }' benchmark/benchmark.csv};
  \end{axis}
@@ -634,8 +634,8 @@ and fusion of streams is guaranteed by construction.
 
 We have measured the difference between functional and monadic streams
 on two different benchmarks: moving average and FIR filter. The
-measurements have been performed on a MacBook Pro, equipped with a 2
-GHz Intel Core i7 and 8 GB 1600 MHz DDR3. Only one core as been used
+measurements have been performed on a Linux desktop, equipped with a 3.5
+GHz Intel Core i7-3770K and 16 GB 1600 MHz DDR3. Only one core has been used
 throughout all benchmarks.
 
 The results for the moving average is shown in figure
@@ -814,6 +814,6 @@ order.
 
 # Acknowledgements
 
-This research was funded by the Swedish Foundation for Strategic Research (in the RAWFP project).
+This research was funded by the Swedish Foundation for Strategic Research (in the RAWFP project) and the Swedish Research Council.
 
 # References
