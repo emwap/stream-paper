@@ -44,6 +44,7 @@ benchmark benchmark
   other-extensions:
   build-depends:
     base >=4 && <4.8,
+    ghc-paths,
     deepseq,
     criterion,
     syntactic < 2,
