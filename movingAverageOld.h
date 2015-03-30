@@ -13,17 +13,11 @@
 #include <complex.h>
 
 
-struct s_2_arr_unsignedS32_arr_double
-{
-  struct array * member1;
-  struct array * member2;
-};
-
-struct s_3_unsignedS32_s_2_arr_unsignedS32_arr_double_s_2_arr_unsignedS32_arr_double
+struct s_3_unsignedS32_arr_double_arr_double
 {
   uint32_t member1;
-  struct s_2_arr_unsignedS32_arr_double member2;
-  struct s_2_arr_unsignedS32_arr_double member3;
+  struct array * member2;
+  struct array * member3;
 };
 
 void movingAvg(struct array * v0, struct array * * out);
