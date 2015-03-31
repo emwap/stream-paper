@@ -261,11 +261,16 @@ code from the corresponding Feldspar implementation, we see that the
 window update is performed through mutation:
 
 ~~~ {.C}
-  copy(window, zeros);
-  TODO: Add relevant fragments from the generated code.
-  while (..) {
+  v14 = 0;
+  copy(v7, zeros);
+  for (uint32_t v24 = 0; v24 < 32; v24 += 1) {
+    v48 = at(double,v0,v25);
+    v27 = v14;
+    v14 = ((v27 + 1) % 8);
+    at(double,v7,v27) = v48;
+    v50 = sum(v7) / 8.0
     ...
-    copy(window, window, len - 1);
+    at(double,*out,v24) = v50;
   }
 ~~~
 
