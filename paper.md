@@ -69,7 +69,7 @@ functional stream representation. Our contributions are:
 * We show how our new stream representation can be used in EDSLs.
   It is currently used in the Feldspar language.
 
-* We demonstrate a performance advantage of a factor of fours compared
+* We demonstrate a performance advantage of a factor of four compared
   to the functional representation when using our monadic
   representation in Feldspar.
 
@@ -639,28 +639,28 @@ and that much of the overhead due to high-level data types like `Stream` is redu
 We have measured the difference between functional and monadic streams
 on two different benchmarks: moving average and FIR filter. The
 measurements have been performed on a Linux desktop, equipped with a 3.5
-GHz Intel Core i7-3770K and 16 GB 1600 MHz DDR3. Only one core has been used
+GHz Intel Core i7-3770K and 16 GB 1600 MHz DDR3. One core is used
 throughout all benchmarks.
 
-The results for the moving average is shown in figure
+The results for the moving average is shown in Figure
 \ref{fig:measurements-mov-avg}. The points labeled "Pure" show the
-results for the purely functional stream representation, while
-the "Monadic Buffer" points show the results for the monadic streams using a
-cyclic buffer. We've tested the different implementations using a
-wide variety of buffer sizes to see how our technique scales, though
-it should be said that typical filter orders don't go above five in
-digital signal processing applications.
-For small buffer sizes, the monadic buffer version is slightly
-better but loses as the size of the window grows large. The reason is
-that the cyclic buffer implementation uses the modulus operation
-frequently to make sure that the buffer is presented to the programmer
-with elements in the right order and not shifted. As the window grows
-larger the cost of the modulus operations kills the performance.  The
-third set of points shows the result of an implementation where the
-buffer is kept entirely in references (see [Streams for EDSLs]). That version readily outperforms
-the two other versions, and is consistently at least $4\times$ faster than the functional representation.
+results for the purely functional stream representation, while the
+points labeled "Monadic Buffer" show the results for the monadic
+streams using a cyclic buffer. Filter orders up to five are typical in
+digital signal processing applications but we tested the different
+implementations with a wide variety of buffer sizes to see the
+scalability of our technique.  The monadic buffer version is slightly
+better for small buffer sizes but worse for large window sizes.  The
+reason is that the cyclic buffer implementation uses the modulus
+operation frequently to ensure that the buffer is presented to the
+programmer with elements in the right order and not shifted. The
+number of modulus operations grows with the window size. The third
+set of points shows the result of an implementation where the buffer
+is kept entirely in references (see [Streams for EDSLs]). That version
+readily outperforms the two other versions, and is consistently at
+least $4\times$ faster than the functional representation.
 
-The FIR filter benchmark is presented in figure
+The FIR filter benchmark is presented in Figure
 \ref{fig:measurements-fir}. The "Pure" points again show the
 performance of purely functional stream. "Monadic" shows monadic
 streams where the buffer is stored in references.
