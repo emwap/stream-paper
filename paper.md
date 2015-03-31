@@ -106,7 +106,7 @@ movingAvg n (Stream step init) = Stream step' init'
 This implementation is inefficient because the window needs to be
 copied each iteration, even if the operations `ixmap` and `\\` are
 fused. Copying can be avoided to some extent by using smarter window
-representations. The smart representations tend to have a high
+representations but smart window representations tend to have a high
 constant overhead making them unsuitable for the common case of small
 window sizes.
 
