@@ -9,7 +9,7 @@ import Feldspar.SimpleVector
 import Feldspar.Compiler
 
 -- comp :: (SyntacticFeld prog) => FilePath -> String -> prog -> IO ()
-comp fp fun prog = compile prog fp fun defaultOptions
+comp fp fun prog = compile prog fp fun defaultOptions{ useNativeArrays = True }
 
 movAvgOld = Old.streamAsVector (Old.movingAvg 8) -:: newLen1 32 >-> tPull1 tDouble
 movAvgNew = New.streamAsVector (New.movingAvg 8) -:: newLen1 32 >-> tPull1 tDouble
