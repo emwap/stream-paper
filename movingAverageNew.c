@@ -38,15 +38,9 @@ void movingAvg(struct array * v0, struct array * * out)
     v25 = v5;
     v48 = at(double,v0,v25);
     v5 = (v25 + 1);
-    if (true)
-    {
-      v27 = v14;
-      v14 = ((v27 + 1) % 8);
-      at(double,v7,v27) = v48;
-    }
-    else
-    {
-    }
+    v27 = v14;
+    v14 = ((v27 + 1) % 8);
+    at(double,v7,v27) = v48;
     v31 = v14;
     v49 = (v31 + 8);
     e51 = 0.0;
