@@ -13,6 +13,6 @@
 #include <complex.h>
 
 
-void rememberCycle(uint32_t v0, uint32_t v1[4294967295], uint32_t * out);
+void rememberCycle(uint32_t v0, struct array * v1, struct array * * out);
 
 #endif // REMEMBERNEW_H
