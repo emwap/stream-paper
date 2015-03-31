@@ -419,18 +419,14 @@ foo arr = remember n $ .. $ cycle arr
 ~~~
 
 The Feldspar-generated code for this pattern contains one loop index
-originating from `cycle` and one from `remember`:
+called v4 originating from `remember` and one called v5 originating
+from `cycle`:
 
 ~~~ {.C}
-int i1 = 0;
-int i2 = 0;
-bool cond = true;
-TODO: Insert generated code.
-while (cond) {
-  ...
-  i1++;
-  i2++;
-  cond = i1 < n && i2 < n;
+for (uint32_t v4 = 0; v4 < v0; v4 += 1) {
+    v5 = v3;
+    v3 = ((v5 + 1) % v9);
+    at(uint32_t,*out,v4) = at(uint32_t,v1,v5);
 }
 ~~~
 
@@ -479,12 +475,8 @@ The new code for `cycle` is considerably shorter and will also
 generate better code:
 
 ~~~ {.C}
-void fun(int i, ..) {
-  TODO: Insert generated code.
-  while (i < n) {
-    ...
-    i++;
-  }
+for (uint32_t v3 = 0; v3 < v0; v3 += 1) {
+    at(uint32_t,*out,v3) = at(uint32_t,v1,(v3 % v6));
 }
 ~~~
 
