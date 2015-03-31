@@ -667,7 +667,11 @@ The results for the moving average is shown in figure
 \ref{fig:measurements-mov-avg}. The points labeled "Pure" show the
 results for the purely functional stream representation, while
 the "Monadic Buffer" points show the results for the monadic streams using a
-cyclic buffer. For small buffer sizes, the monadic buffer version is slightly
+cyclic buffer. We've tested the different implementations using a
+wide variety of buffer sizes to see how our technique scales, though
+it should be said that typical filter orders don't go above five in
+digital signal processing applications.
+For small buffer sizes, the monadic buffer version is slightly
 better but loses as the size of the window grows large. The reason is
 that the cyclic buffer implementation uses the modulus operation
 frequently to make sure that the buffer is presented to the programmer
