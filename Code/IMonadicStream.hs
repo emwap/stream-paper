@@ -75,6 +75,11 @@ take n (Stream init)
           setArr marr ix (desugar a)
         return marr
 
+cycle :: Syntax a => Pull DIM1 a -> Stream a
+cycle vec = Stream $ do
+    let l = length vec
+    loop $ \i -> return (vec ! (Z:.(i `mod` l)))
+
 recurrenceIO2 :: (Type a, Type b)
               => [Data a] -> Stream (Data a) -> [Data b] ->
                  ([Data a] -> [Data b] -> Data b) ->

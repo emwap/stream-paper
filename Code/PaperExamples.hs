@@ -22,6 +22,8 @@ movingAverageNew = comp "movingAverageNew" "movingAvg" movAvgNew
 
 main :: IO ()
 main = do
+  comp "rememberNew" "rememberCycle" ((\n arr -> New.take n $ New.cycle arr) -:: id >-> tPull1 tIndex >-> id)
+  comp "rememberIx"  "rememberCycle" ((\n arr -> Ix.take n $ Ix.cycle arr) -:: id >-> tPull1 tIndex >-> id)
   movingAverageOld
   movingAverageNew
   return ()
