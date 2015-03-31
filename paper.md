@@ -10,7 +10,7 @@ institute:
  - Chalmers University of Technology
  - SICS Swedish ICT AB
 abstract: |
-  Functional stream representations allow for a high level,
+  Functional stream representations allow for a high-level,
   compositional way of programming digital signal processing
   algorithms. However, some algorithms, such as filters, cannot
   be efficiently implemented using purely functional techniques,
@@ -21,12 +21,13 @@ abstract: |
   algorithms. Still, our representation enjoys many of the benefits of
   purely functional streams, such as a functional API and fusion.
   Our representation enables further optimizations: we show how to
-  remove duplicate loop variables.
+  remove duplicate loop variables, and how to keep buffers entirely
+  in references.
 
   The representation has been evaluated in the context of the Feldspar
   embedded DSL, and our measurements show that our new monadic representation
-  consistently outperforms the functional representation by almost
-  an order of magnitude.
+  consistently outperforms the functional representation by at least
+  a factor of four.
 ---
 
 # Introduction
@@ -68,9 +69,9 @@ functional stream representation. Our contributions are:
 * We show how our new stream representation can be used in EDSLs.
   It is currently used in the Feldspar language.
 
-* We demonstrate a performance advantage of almost an order of
-  magnitude compared to the functional representation when using our
-  monadic representation in Feldspar.
+* We demonstrate a performance advantage of a factor of fours compared
+  to the functional representation when using our monadic
+  representation in Feldspar.
 
 The new monadic formulation of streams is applicable to any language with a monad for mutable effects. We show an implementation in Haskell based on `IO` in section [Efficient Monadic Streams] as well as an implementation in the Feldspar EDSL [@FeldsparIFL2010] in the section [Streams for EDSLs]. The advantages of the new stream representation are easier to demonstrate in Feldspar because the generated C code makes excessive copying both easy to see and measure. We compromise by using the Haskell implementation for presentation purposes and the Feldspar implementation for the performance evaluation.
 
