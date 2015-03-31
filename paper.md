@@ -110,15 +110,41 @@ representations but smart window representations tend to have a high
 constant overhead making them unsuitable for the common case of small
 window sizes.
 
-We see the problem clearly in the generated C code from the corresponding Feldspar implementation:
+We see the problem clearly in the generated C code from the
+corresponding Feldspar implementation. The window is stored in
+`v66.member2.member2` and lines 24 to 27 performs the copying of the
+window. ^[We have elided some of the generated code for presentation
+purposes.]
 
-~~~ {.C}
-  copy(window, zeros);
-  TODO: Add relevant fragments from the generated code.
-  while (..) {
+~~~ {.C .numberLines}
+  ...
+  for (uint32_t v67 = 0; v67 < 32; v67 += 1)
+  {
     ...
-    copy(tmpbuf, window, len);
-    copy(window, tmpbuf, len - 1);
+    v178[0] = v190;
+    for (uint32_t v77 = 0; v77 < v177; v77 += 1)
+    {
+      v178[(v77 + 1)] = ((v68).member2).member2[v77];
+    }
+    e192 = 0.0;
+    for (uint32_t v71 = 0; v71 < v174; v71 += 1)
+    {
+      e192 = (e192 + v178[v71]);
+    }
+    v179 = (e192 / 8.0);
+    v181 = (min((v189 - 1), v189) + 1);
+    v184 = min((v189 - 1), v189);
+    v186 = (min((v191 - 1), v191) + 1);
+    v188 = min((v191 - 1), v191);
+    *out[v67] = v179;
+    (v66).member1 = ((v68).member1 + 1);
+    ((v66).member2).member1[0] = v181;
+    ((v66).member2).member2[0] = v190;
+    for (uint32_t v89 = 0; v89 < v184; v89 += 1)
+    {
+      ((v66).member2).member2[(v89 + 1)] = ((v68).member2).member2[v89];
+    }
+    ...
   }
 ~~~
 
@@ -255,25 +281,26 @@ stream will contain values computed from a sliding window of the
 input stream.
 
 The function `movingAvg` uses `recurrence` to provide sliding windows
-of the input stream and passes a function to compute the average of
-a window. The initial window only contains zeros. In the generated
-code from the corresponding Feldspar implementation, we see that the
-window update is performed through mutation:
+of the input stream and passes a function to compute the average of a
+window. The initial window only contains zeros. In the generated code
+from the corresponding Feldspar implementation, line 7 shows the
+window update performed through mutation (the window is stored in
+`v7`) : ^[We have removed some variable-to-variable assignments in the
+code to make it more readable.]
 
-~~~ {.C}
+~~~ {.C .numberLines}
   v14 = 0;
   copy(v7, zeros);
   for (uint32_t v24 = 0; v24 < 32; v24 += 1) {
-    v48 = at(double,v0,v25);
+    v48 = v0[v25];
     v27 = v14;
     v14 = ((v27 + 1) % 8);
-    at(double,v7,v27) = v48;
+    v7[v27] = v48;
     v50 = sum(v7) / 8.0
     ...
-    at(double,*out,v24) = v50;
+    *out[v24] = v50;
   }
 ~~~
-
 
 More advanced digital filters, like FIR filters, can be
 implemented in a similar fashion to the moving average:
@@ -419,7 +446,7 @@ foo arr = remember n $ .. $ cycle arr
 ~~~
 
 The Feldspar-generated code for this pattern contains one loop index
-called v4 originating from `remember` and one called v5 originating
+called `v4` originating from `remember` and one called `v5` originating
 from `cycle`:
 
 ~~~ {.C}
