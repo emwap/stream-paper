@@ -13,6 +13,6 @@
 #include <complex.h>
 
 
-void movingAvg(struct array * v0, struct array * * out);
+void movingAvg(double v0[4294967295], double * out);
 
 #endif // MOVINGAVERAGENEW_H

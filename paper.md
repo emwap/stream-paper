@@ -453,7 +453,7 @@ from `cycle`:
 for (uint32_t v4 = 0; v4 < v0; v4 += 1) {
     v5 = v3;
     v3 = ((v5 + 1) % v9);
-    at(uint32_t,*out,v4) = at(uint32_t,v1,v5);
+    *out[v4] = v1[v5];
 }
 ~~~
 
@@ -503,7 +503,7 @@ generate better code:
 
 ~~~ {.C}
 for (uint32_t v3 = 0; v3 < v0; v3 += 1) {
-    at(uint32_t,*out,v3) = at(uint32_t,v1,(v3 % v6));
+    *out[v3] = v1[v3 % v6];
 }
 ~~~
 

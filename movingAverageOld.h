@@ -13,13 +13,19 @@
 #include <complex.h>
 
 
-struct s_3_unsignedS32_arr_double_arr_double
+struct s_2_narr_unsignedS32_narr_double
 {
-  uint32_t member1;
-  struct array * member2;
-  struct array * member3;
+  uint32_t member1[4294967295];
+  double member2[4294967295];
 };
 
-void movingAvg(struct array * v0, struct array * * out);
+struct s_3_unsignedS32_s_2_narr_unsignedS32_narr_double_s_2_narr_unsignedS32_narr_double
+{
+  uint32_t member1;
+  struct s_2_narr_unsignedS32_narr_double member2;
+  struct s_2_narr_unsignedS32_narr_double member3;
+};
+
+void movingAvg(double v0[4294967295], double * out);
 
 #endif // MOVINGAVERAGEOLD_H
