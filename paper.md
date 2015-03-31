@@ -112,39 +112,19 @@ window sizes.
 
 We see the problem clearly in the generated C code from the
 corresponding Feldspar implementation. The window is stored in
-`v66.member2.member2` and lines 24 to 27 performs the copying of the
-window. ^[We have elided some of the generated code for presentation
+`v46.member2.member2` and the for-loop on lines 4 to 7 performs the
+copying. ^[We have elided most of the generated code for presentation
 purposes.]
 
 ~~~ {.C .numberLines}
-  ...
-  for (uint32_t v67 = 0; v67 < 32; v67 += 1)
+  for (uint32_t v47 = 0; v47 < 32; v47 += 1)
   {
-    ...
-    v178[0] = v190;
-    for (uint32_t v77 = 0; v77 < v177; v77 += 1)
-    {
-      v178[(v77 + 1)] = ((v68).member2).member2[v77];
-    }
-    e192 = 0.0;
-    for (uint32_t v71 = 0; v71 < v174; v71 += 1)
-    {
-      e192 = (e192 + v178[v71]);
-    }
-    v179 = (e192 / 8.0);
-    v181 = (min((v189 - 1), v189) + 1);
-    v184 = min((v189 - 1), v189);
-    v186 = (min((v191 - 1), v191) + 1);
-    v188 = min((v191 - 1), v191);
-    *out[v67] = v179;
-    (v66).member1 = ((v68).member1 + 1);
-    ((v66).member2).member1[0] = v181;
-    ((v66).member2).member2[0] = v190;
+    //Code for computing the average of the window elided
     for (uint32_t v89 = 0; v89 < v184; v89 += 1)
     {
-      ((v66).member2).member2[(v89 + 1)] = ((v68).member2).member2[v89];
+      ((v46).member2).member2[(v63 + 1)] = ((v48).member2).member2[v63];
     }
-    ...
+    //Code updating the struct which holds the window elided
   }
 ~~~
 
@@ -296,9 +276,7 @@ code to make it more readable.]
     v27 = v14;
     v14 = ((v27 + 1) % 8);
     v7[v27] = v48;
-    v50 = sum(v7) / 8.0
-    ...
-    *out[v24] = v50;
+    // Code computing the average elided
   }
 ~~~
 
