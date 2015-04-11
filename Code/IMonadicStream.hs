@@ -8,8 +8,10 @@ import Feldspar.Vector
           (Pull, Pull1, fromZero, toPull, arrToManifest
           ,freezePull1, indexed1, value1, fromList
           ,sum,length,replicate1,scalarProd)
+import qualified Feldspar.Vector as V
 import Feldspar.Vector.Shape (Shape(..),DIM1)
 import Feldspar.Mutable
+import qualified BufferNoMod as B
 
 data Stream a = Stream (M (Data Index -> M a))
 
@@ -35,11 +37,31 @@ recurrenceIO ii (Stream init) io mkExpr = Stream $ do
     obuf <- initBuffer io
     loop $ \i -> do
       a <- next i
-      when (lenI /= 0) $ putBuf ibuf a
+      whenM (lenI /= 0) $ putBuf ibuf a
       b <- withBuf ibuf $ \ib ->
              withBuf obuf $ \ob ->
                return $ mkExpr ib ob
       whenM (lenO /= 0) $ putBuf obuf b
+      return b
+  where
+    lenI = length ii
+    lenO = length io
+
+recurrenceIONoMod :: (Type a, Type b) =>
+                     Pull1 a -> Stream (Data a) -> Pull1 b ->
+                     (Pull1 a -> Data Index -> Pull1 b -> Data Index -> Data b) ->
+                     Stream (Data b)
+recurrenceIONoMod ii (Stream init) io mkExpr = Stream $ do
+    next <- init
+    ibuf <- B.initBuffer ii
+    obuf <- B.initBuffer io
+    loop $ \i -> do
+      a <- next i
+      whenM (lenI /= 0) $ B.putBuf ibuf a
+      b <- B.withBuf ibuf $ \i ib ->
+             B.withBuf obuf $ \o ob ->
+               return $ mkExpr ib i ob o
+      whenM (lenO /= 0) $ B.putBuf obuf b
       return b
   where
     lenI = length ii
@@ -110,6 +132,14 @@ fir b inp =
 fir2 :: Numeric a => [Data a] -> Stream (Data a) -> Stream (Data a)
 fir2 b inp =
   recurrenceIO2 (P.replicate (P.length b) 0) inp [] (\x _ -> P.sum $ P.zipWith (*) x b)
+
+firNoMod  :: Numeric a => Pull1 a ->
+             Stream (Data a) -> Stream (Data a)
+firNoMod b inp =
+  recurrenceIONoMod (replicate1 (length b) 0) inp (replicate1 1 0)
+                    (\w i _ _ -> scalarProd (V.take (l-i) b) (V.drop i w)
+                               + scalarProd (V.drop (l-i) b) (V.take i w))
+  where l = length b
 
 movingAvg :: (Fraction a, RealFloat a)
           => Data WordN -> Stream (Data a) -> Stream (Data a)
