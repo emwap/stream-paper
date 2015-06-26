@@ -3,9 +3,11 @@
 module BufferNoMod where
 
 import qualified Prelude
+import Control.Applicative
 
 import Feldspar
 import Feldspar.Vector
+import Feldspar.Mutable hiding (Buffer(..),initBuffer')
 
 -- | Indexable cyclic buffer
 data Buffer a = Buffer
@@ -27,8 +29,8 @@ initBuffer' buf = do
           fmap sugar $ getArr buf $ calcIndex l i j
         put a = do
           i <- getRef ir
-          setRef ir ((i+1) `mod` l)
-          setArr buf i $ desugar a
+          setArr buf i (desugar a)
+          modifyRef ir (\x -> condition (x+1>=l) 0 (x+1))
         with :: (Syntax a, Syntax b) => (Data Index -> Pull DIM1 a -> M b) -> M b
         with f = do
           i <- getRef ir

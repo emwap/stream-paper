@@ -617,11 +617,12 @@ and that much of the overhead due to high-level data types like `Stream` is redu
       ylabel=s,
       every axis x label/.style={at={(1,-0.09)},anchor=north east},
       every axis y label/.style={at={(-0.1,0.65)},anchor=east},
-      legend entries={\scriptsize{Pure},\scriptsize{C reference},\scriptsize{Monadic}},
+      legend entries={\scriptsize{Pure},\scriptsize{C reference},\scriptsize{Monadic},\scriptsize{Monadic 2}},
       legend style={at={(0.03,0.93)},anchor=north west},
       cycle list={blue,mark=*\\%
                   red,mark=square*\\%
                   brown,mark=+\\%
+                  black,mark=*\\%
                  }
     ]
     \addplot shell[prefix=pgfshell_,id=pure]
@@ -630,6 +631,8 @@ and that much of the overhead due to high-level data types like `Stream` is redu
         { awk -F'/|,' '/c_fir_ref/ { print $2,$5 }' benchmark/benchmark.csv};
     \addplot shell[prefix=pgfshell_,id=monadic]
         { awk -F'/|,' '/c_fir2_bench/ { print $2,$5 }' benchmark/benchmark.csv};
+    \addplot shell[prefix=pgfshell_,id=monadic3]
+        { awk -F'/|,' '/c_fir3_bench/ { print $2,$5 }' benchmark/benchmark.csv};
  \end{axis}
 \end{tikzpicture}
 \caption{Running time of filters compared to reference C implementations.}

@@ -19,10 +19,11 @@ library
   exposed-modules:
     IMonadicStream
     StreamOld
+    BufferNoMod
 
   hs-source-dirs: Code
   build-depends:
-    base >= 4 && < 4.8,
+    base >= 4 && < 4.9,
     feldspar-language < 0.7,
     feldspar-compiler < 0.7
   default-language: Haskell2010
@@ -43,7 +44,7 @@ benchmark benchmark
   -- other-modules:
   other-extensions:
   build-depends:
-    base >=4 && <4.8,
+    base,
     ghc-paths,
     deepseq,
     criterion,

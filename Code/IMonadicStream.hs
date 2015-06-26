@@ -1,3 +1,6 @@
+{-# LANGUAGE GADTs #-}
+{-# LANGUAGE FlexibleContexts #-}
+
 module IMonadicStream where
 
 import qualified Prelude as P
