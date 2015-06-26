@@ -465,7 +465,7 @@ remember len (Stream init) = do
 ~~~
 
 The key difference from the previous version is that the loop variable
-`i` is fed to the step function `next` Functions like `cycle` can now
+`i` is fed to the step function `next`. Functions like `cycle` can now
 take advantage of the provided loop index, and don't need to create
 their own loop variables:
 
