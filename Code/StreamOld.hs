@@ -6,6 +6,7 @@ module StreamOld where
 import qualified Prelude
 import Feldspar
 import Feldspar.Vector
+import Feldspar.Mutable
 import Feldspar.Compiler
 
 data Stream a = forall s . Syntax s => Stream (s -> (a,s)) s
