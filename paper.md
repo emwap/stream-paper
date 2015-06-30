@@ -114,8 +114,8 @@ window sizes.
 We see the problem clearly in the generated C code from the
 corresponding Feldspar implementation. The window is stored in
 `v46.member2.member2` and the for-loop on lines 4 to 7 performs the
-copying. ^[We have elided most of the generated code for presentation
-purposes.]
+copying. We have elided most of the generated code for presentation
+purposes.
 
 ~~~ {.C .numberLines}
   for (uint32_t v47 = 0; v47 < 32; v47 += 1)
