@@ -499,7 +499,9 @@ rewriting explained in the [Fusion] section happens automatically, no
 extra code needs to be written in order to achieve the optimization.
 
 Feldspar [@FeldsparIFL2010] has a stream library that uses a monadic
-embedding. Instead of the `IO` monad, it uses Feldspar's `M` monad [@genericmonads11] for mutable effects:
+embedding. The library uses Feldspar's `M` monad [@genericmonads11]
+for mutable effects instead of the `IO` monad used in the previous
+examples:
 
 ~~~ {.haskell}
 data Stream a = Stream (M (M a))
