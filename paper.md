@@ -245,7 +245,7 @@ putBuf     :: Buffer a -> a -> IO ()
 withBuf    :: Buffer a -> (Array Int a -> b) -> IO b
 ~~~
 
-The function `initBuffer` creates a new buffer, `putBuf` adds a new
+The function `initBuffer` creates a new buffer, and `putBuf` adds a new
 element while discarding the oldest element. The programmer can get an
 immutable view of the current contents of the buffer in a local scope
 by using `withBuf`. The function `withBuf` can be implemented without
@@ -253,7 +253,7 @@ copying but program correctness relies on the programmer to ensure
 that the provided function does not return the whole array.
 
 Returning to the function `recurrence`; the input stream stream is
-initialized as is the cyclic buffer. For each element in the output
+initialized, as is the cyclic buffer. For each element in the output
 stream an element from the input stream is computed and stored in the
 cyclic buffer. The content of the cyclic buffer is processed by
 a function provided by the caller of `recurrence` and the result is
@@ -266,7 +266,7 @@ of the input stream and passes a function to compute the average of a
 window. The initial window only contains zeros. In the generated code
 from the corresponding Feldspar implementation, line 7 shows the
 window update performed through mutation (the window is stored in
-`v7`) : ^[We have removed some variable-to-variable assignments in the
+`v7`): ^[We have removed some variable-to-variable assignments in the
 code to make it more readable.]
 
 ~~~ {.C .numberLines}
