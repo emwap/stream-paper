@@ -612,7 +612,7 @@ and that much of the overhead due to high-level data types like `Stream` is redu
       height=0.6\textwidth,
       width=0.8\textwidth,
       title=FIR filter,
-      title style={at={(0.5,0.94)},anchor=south},
+      title style={at={(0.5,0.95)},anchor=south},
       xlabel=\scriptsize{filter order},
       ylabel=s,
       every axis x label/.style={at={(1,-0.09)},anchor=north east},
