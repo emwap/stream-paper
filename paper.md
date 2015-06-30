@@ -41,7 +41,7 @@ data Stream a = forall s . Stream (s -> (a,s)) s
 ~~~
 
 The representation is expressive and can be compiled into efficient
-code by means of fusion.
+code by means of fusion [@Caspi19981].
 
 Consider computing a simple moving average over a stream using the
 above representation. The implementation would keep track of the most
