@@ -410,6 +410,12 @@ The final result is as efficient as one can possibly hope for.
 
 Fusing combinators other than `map` follows a similar pattern.
 
+The `M` monad implementation in Feldspar is based on the continuation
+monad, which ensures that bind is always associated to the right
+[@genericmonads11]. This way Feldspar fuses stream computations
+on-the-fly while constructing the AST -- no additional transformations
+are needed.
+
 # Avoiding Multiple Loop Variables
 
 The stream representation already presented allows for mutation which
