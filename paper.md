@@ -418,11 +418,11 @@ are needed.
 
 # Avoiding Multiple Loop Variables
 
-The stream representation already presented allows for mutation which
-improves efficiency of the generated code considerably. The generated
+The stream representation already presented allows for mutation, which
+can improve efficiency of the generated code considerably. The generated
 code still suffers from a problem where fused functions will cause
 multiple loop indices to appear in the same loop. An extra loop
-counter might be tolerable but the issue runs deeper than that and
+counter might be tolerable but the issue runs deeper than that:
 Lippmeier et al. report having seen eight loop counters appear in the
 wild [@lippmeier2013data]. Consider the following pattern:
 
