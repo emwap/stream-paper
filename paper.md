@@ -169,8 +169,8 @@ map f (Stream init) = Stream $ do
 ~~~
 
 The new stream is initialized by running the initialization
-computation from the input stream, yielding the step function `next`.
-Then, in the new step function, the function `next` is run to produce
+computation from the input stream, yielding the step action `next`.
+Then, in the new step action, the function `next` is run to produce
 an element `a` which is transformed by the function `f` and then
 returned. The combinator `loop` is defined as `return`. We use the
 name `loop` to convey that the code returned by `loop` is executed an
@@ -465,7 +465,7 @@ remember len (Stream init) = do
 ~~~
 
 The key difference from the previous version is that the loop variable
-`i` is fed to the step function `next`. Functions like `cycle` can now
+`i` is fed to the step action `next`. Functions like `cycle` can now
 take advantage of the provided loop index, and don't need to create
 their own loop variables:
 
@@ -767,7 +767,7 @@ The stream fusion framework [@coutts2007stream] builds on the following coiterat
 data Stream a = forall s . Stream (s -> Step a s) s
 ~~~
 
-The difference to our initial representation is the `Step` type that is returned by the step function. The `Step` type has three cases: (1) a pair of an element `a` and a new state `s`, or (2) just a new state, or (3) a value signaling that the stream has ended. This stream representation makes it possible to give efficient definitions of many stream operations and make sure that streams are fused when operations are composed. The stream fusion framework uses GHC rewrite rules to convert list-based code to stream-based code where possible.
+The difference to our initial representation is the `Step` type that is returned by the step action. The `Step` type has three cases: (1) a pair of an element `a` and a new state `s`, or (2) just a new state, or (3) a value signaling that the stream has ended. This stream representation makes it possible to give efficient definitions of many stream operations and make sure that streams are fused when operations are composed. The stream fusion framework uses GHC rewrite rules to convert list-based code to stream-based code where possible.
 
 In contrast to our work, stream fusion does not support streams with mutable state.
 
@@ -788,7 +788,7 @@ The fusion framework in Conduits relies on GHC rules to rewrite recursive stream
 data Stream m o r = forall s . Stream (s -> m (Step s o r)) (m s)
 ~~~
 
-This type is quite close to our `Stream` representation: the initialization action of type `m s` can be used to initialize mutable state, and the step function can be used to mutate this state. The main difference is that there is still immutable state of type `s` passed around, which is unnecessary if we put all the state in the monad.
+This type is quite close to our `Stream` representation: the initialization action of type `m s` can be used to initialize mutable state, and the step action can be used to mutate this state. The main difference is that there is still immutable state of type `s` passed around, which is unnecessary if we put all the state in the monad.
 
 \paragraph{\bf FRP}
 
