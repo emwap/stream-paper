@@ -630,9 +630,9 @@ and that much of the overhead due to high-level data types like `Stream` is redu
     \addplot shell[prefix=pgfshell_,id=ref]
         { awk -F'/|,' '/c_fir_ref/ { print $2,$5 }' benchmark/benchmark.csv};
     \addplot shell[prefix=pgfshell_,id=monadic]
-        { awk -F'/|,' '/c_fir2_bench/ { print $2,$5 }' benchmark/benchmark.csv};
+        { awk -F'/|,' '/c_firI2_bench/ { print $2,$5 }' benchmark/benchmark.csv};
     \addplot shell[prefix=pgfshell_,id=monadic3]
-        { awk -F'/|,' '/c_fir3_bench/ { print $2,$5 }' benchmark/benchmark.csv};
+        { awk -F'/|,' '/c_firI3_bench/ { print $2,$5 }' benchmark/benchmark.csv};
  \end{axis}
 \end{tikzpicture}
 \caption{Running time of filters compared to reference C implementations.}
