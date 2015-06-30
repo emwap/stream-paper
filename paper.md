@@ -24,10 +24,10 @@ abstract: |
   remove duplicate loop variables, and how to keep buffers entirely
   in references.
 
-  The representation has been evaluated in the context of the Feldspar
-  embedded DSL, and our measurements show that our new monadic representation
+  Our measurements show that our new monadic representation
   consistently outperforms the functional representation by at least
-  a factor of four.
+  a factor of four when evaluated in the context of the Feldspar
+  embedded DSL.
 ---
 
 # Introduction
