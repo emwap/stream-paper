@@ -484,7 +484,8 @@ cycle arr = Stream $ do
 ~~~
 
 The new code for `cycle` is considerably shorter and will also
-generate better code:
+generate better code. Here is the code for `foo` with the improved
+stream representation:
 
 ~~~ {.C}
 for (uint32_t v3 = 0; v3 < v0; v3 += 1) {
