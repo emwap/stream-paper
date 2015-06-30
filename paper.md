@@ -406,9 +406,9 @@ Stream $ do
     return (f (g a))
 ~~~
 
-The final result is as efficient as one can possibly hope for.
-
-Fusing combinators other than `map` follows a similar pattern.
+The result does not create an intermediate stream which is as
+efficient as one can hope for. Fusing combinators other than `map`
+follows a similar pattern.
 
 # Avoiding Multiple Loop Variables
 
