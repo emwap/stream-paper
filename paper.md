@@ -640,10 +640,15 @@ and that much of the overhead due to high-level data types like `Stream` is redu
 \end{figure}
 
 We have measured the difference between functional and monadic streams
-on two different benchmarks: moving average and FIR filter. The
-measurements have been performed on a Linux desktop, equipped with a 3.5
-GHz Intel Core i7-3770K and 16 GB 1600 MHz DDR3. One core is used
-throughout all benchmarks.
+on two different benchmarks: moving average and FIR filter. We have
+used the stream representation which avoids multiple loop variables in
+all our benchmarks, though the simpler representation is just as fast
+for these benchmarks due to the C compiler being clever enough.
+The measurements have been performed on a Linux desktop, equipped with
+a 3.5 GHz Intel Core i7-3770K and 16 GB 1600 MHz DDR3. The C compiler
+used to compile all benchmarks is gcc 4.6.3. One core is used
+throughout all benchmarks. Times are measured using the criterion
+package.
 
 The results for the moving average is shown in Figure
 \ref{fig:measurements-mov-avg}. The points labeled "Pure" show the
