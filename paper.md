@@ -264,10 +264,9 @@ input stream.
 The function `movingAvg` uses `recurrence` to provide sliding windows
 of the input stream and passes a function to compute the average of a
 window. The initial window only contains zeros. The generated code
-from the corresponding Feldspar implementation shows the window update
-performed through mutation in line 7 (the window is stored in `v7`):
-^[We removed some variable-to-variable assignments to make the code
-more readable.]
+from the corresponding Feldspar implementation shows the window `v7`
+updated through mutation in line 7: ^[We removed some
+variable-to-variable assignments to make the code more readable.]
 
 
 ~~~ {.C .numberLines}
