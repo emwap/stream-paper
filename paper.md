@@ -349,11 +349,11 @@ map f (map g (Stream init))
 
 => { inlining map }
 
-map f (Stream $ do
+map f ( Stream $ do
   next <- init
   loop $ do
     a <- next
-    return (f a)
+    return (f a) )
 
 => { inlining map }
 
