@@ -143,9 +143,9 @@ enable mutation.
 data Stream a = Stream (IO (IO a))
 ~~~
 
-It is straightforward to parameterize this representation on the
-particular choice of monad. We use the `IO` monad here for the sake of
-concreteness.
+We use the `IO` monad for the sake of concreteness but it is
+straightforward to parameterize this representation on the particular
+choice of monad.
 
 Why does the representation have two levels of monads? The key to
 understanding this representation is that the outer monadic
