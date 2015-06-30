@@ -120,12 +120,12 @@ purposes.]
 ~~~ {.C .numberLines}
   for (uint32_t v47 = 0; v47 < 32; v47 += 1)
   {
-    //Code for computing the average of the window elided
+    // Code for computing the average of the window elided
     for (uint32_t v89 = 0; v89 < v184; v89 += 1)
     {
       ((v46).member2).member2[(v63 + 1)] = ((v48).member2).member2[v63];
     }
-    //Code updating the struct which holds the window elided
+    // Code for updating the struct which holds the window elided
   }
 ~~~
 
