@@ -450,8 +450,8 @@ data Stream a = Stream (IO (Int -> IO a))
 ~~~
 
 The function performing allocation is responsible for providing the
-loop index. Here is the new version of `remember` for the new
-representation:
+loop index. Our previous example `remember` performs allocation so it
+has to be updated for the new representation:
 
 ~~~ {.haskell}
 remember :: Int -> Stream a -> IO (Array Int a)
@@ -465,9 +465,8 @@ remember len (Stream init) = do
 ~~~
 
 The key difference from the previous version is that the loop variable
-`i` is fed to the step action `next`. Functions like `cycle` can now
-take advantage of the provided loop index, and don't need to create
-their own loop variables:
+`i` is fed to the step action `next`. This allows functions like
+`cycle` to immediately use the provided loop variable:
 
 ~~~ {.haskell}
 cycle :: Array Int a -> Stream a
@@ -477,9 +476,9 @@ cycle arr = Stream $ do
     return (arr!(i `mod` l))
 ~~~
 
-The new code for `cycle` is considerably shorter and will also
-generate better code. Here is the code for `foo` with the improved
-stream representation:
+The new code for `cycle` is both shorter and will generate better
+code. The code generated for `foo` with the improved stream
+representation is:
 
 ~~~ {.C}
 for (uint32_t v3 = 0; v3 < v0; v3 += 1) {
