@@ -782,7 +782,7 @@ There are many Haskell libraries for dealing with streaming data, such as Fudget
 
 Stream representations such as the one in Conduits can describe more general networks than our `Stream` type, e.g. nodes with different input and output rates. However, those stream programs are generally not guaranteed to fuse since they are based on recursive definitions. Conduits are however subject to fusion [@conduit-fusion] when certain requirements are met.
 
-The fusion framework in Conduits relies on GHC rules to rewrite recursive stream programs to corresponding programs based on a non-recursive stream type (an extension of the stream fusion representation above):
+The fusion framework in Conduits relies on GHC rules to rewrite recursive stream programs to corresponding programs based on a non-recursive stream type which is an extension of the stream fusion representation above:
 
 ~~~ {.haskell}
 data Stream m o r = forall s . Stream (s -> m (Step s o r)) (m s)
