@@ -729,7 +729,7 @@ remember' len (Stream init) = do
 
 [^remember]: The helper function `remember'` is needed to get the types right.
 
-The result is now a pure `Array` value rather than a monadic one. This means that we can hide all uses of monads from the user and provide a pure interface to streams. However, in order to make use of mutability, one has still to write monadic code (or use canned solutions, such as `recurrence`).
+The result is now a pure `Array` value rather than a monadic one. This means that we can hide all uses of monads from the user and provide a pure interface to streams. However, one has still to write monadic code or use canned solutions such as `recurrence` in order to make use of mutability.
 
 # Related Work
 
