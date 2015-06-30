@@ -168,7 +168,7 @@ map f (Stream init) = Stream $ do
     return (f a)
 ~~~
 
-The new stream is initialized by running the initialization
+The output stream is initialized by running the initialization
 computation from the input stream, yielding the step action `next`.
 Then, in the new step action, the `next` is run to produce
 an element `a` which is transformed by the function `f` and then
