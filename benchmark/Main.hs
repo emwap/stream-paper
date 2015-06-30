@@ -47,8 +47,8 @@ fir_bench cs v = New.streamAsVector (New.fir cs) v
 fir2_bench :: [Data Double] -> Pull1 Double -> Pull1 Double
 fir2_bench cs v = New.streamAsVector (New.fir2 cs) v
 
-fir3_bench :: Pull1 Double -> Pull1 Double -> Pull1 Double
-fir3_bench cs v = New.streamAsVector (New.fir3 cs) v
+-- fir3_bench :: Pull1 Double -> Pull1 Double -> Pull1 Double
+-- fir3_bench cs v = New.streamAsVector (New.fir3 cs) v
 
 fir2_bench2   = fir2_bench (fmap value (coeffs 2))
 fir2_bench5   = fir2_bench (fmap value (coeffs 5))
@@ -75,6 +75,8 @@ firI2_bench32  = firI2_bench (fmap value (coeffs 32))
 firI2_bench64  = firI2_bench (fmap value (coeffs 64))
 firI2_bench128 = firI2_bench (fmap value (coeffs 128))
 
+firI3_bench :: Pull1 Double -> Pull1 Double -> Pull1 Double
+firI3_bench cs v = I.streamAsVector (I.firNoMod cs) v
 
 mov_avg_bench :: Data Length -> Pull1 Double -> Pull1 Double
 mov_avg_bench l = New.streamAsVector (New.movingAvg l)
@@ -104,7 +106,7 @@ loadFunOptsWith "" defaultOptions{platform=c99{values=[]}} ["-optc=-O3", "-optc=
   , 'fir2_bench32
   , 'fir2_bench64
   , 'fir2_bench128
-  , 'fir3_bench
+--   , 'fir3_bench
   , 'firI_bench
   , 'firI2_bench2
   , 'firI2_bench5
@@ -113,6 +115,7 @@ loadFunOptsWith "" defaultOptions{platform=c99{values=[]}} ["-optc=-O3", "-optc=
   , 'firI2_bench32
   , 'firI2_bench64
   , 'firI2_bench128
+  , 'firI3_bench
   , 'mov_avg_bench
   , 'mov_avg_old
   , 'mov_avg2_bench2
@@ -172,7 +175,7 @@ setupPlugins = do
   _ <- evaluate c_fir2_bench32_builder
   _ <- evaluate c_fir2_bench64_builder
   _ <- evaluate c_fir2_bench128_builder
-  _ <- evaluate c_fir3_bench_builder
+--   _ <- evaluate c_fir3_bench_builder
   _ <- evaluate c_firI_bench_builder
   _ <- evaluate c_firI2_bench2_builder
   _ <- evaluate c_firI2_bench5_builder
@@ -181,6 +184,7 @@ setupPlugins = do
   _ <- evaluate c_firI2_bench32_builder
   _ <- evaluate c_firI2_bench64_builder
   _ <- evaluate c_firI2_bench128_builder
+  _ <- evaluate c_firI3_bench_builder
   _ <- evaluate c_mov_avg_bench_builder
   _ <- evaluate c_mov_avg_old_builder
   _ <- evaluate c_mov_avg2_bench2_builder
@@ -209,9 +213,10 @@ mkFirComp l b b2 = env (setupData l) $ \ ~(o,d,cs) -> bgroup (show l)
   , bench "c_fir_bench"   (whnfIO $ c_fir_bench_raw cs d o)
   , bench "c_fir_old"     (whnfIO $ c_fir_old_raw cs d o)
   , bench "c_fir2_bench"  (whnfIO $ b d o)
-  , bench "c_fir3_bench"  (whnfIO $ c_fir3_bench_raw cs d o)
+--   , bench "c_fir3_bench"  (whnfIO $ c_fir3_bench_raw cs d o)
   , bench "c_firI_bench"  (whnfIO $ c_firI_bench_raw cs d o)
   , bench "c_firI2_bench"  (whnfIO $ b2 d o)
+  , bench "c_firI3_bench"  (whnfIO $ c_firI3_bench_raw cs d o)
   ]
 
 mkAvgComp l m = env (setupData l) $ \ ~(o,d,cs) -> bgroup (show l)
