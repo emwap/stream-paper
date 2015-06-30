@@ -519,7 +519,7 @@ cycle vec = Stream $ do
     return (vec ! (Z :. i))
 ~~~
 
-A notable difference is the `Syntax` constraint on the type of the elements in the Feldspar implementation. This constraint is to restrict the function to elements that can be stored in memory when generating C code.
+A notable difference is the `Syntax` constraint on the type of the elements in the Feldspar implementation. The constraint ensures that elements can be stored in memory when generating C code.
 
 Using the monadic stream representation with EDSLs enables another
 trick not available with the functional representation: the buffer can
