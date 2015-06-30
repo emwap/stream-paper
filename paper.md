@@ -16,7 +16,7 @@ abstract: |
   be efficiently implemented using purely functional techniques,
   due to excessive copying of data.
 
-  We present a monadic representation of stream which introduces the
+  We present a monadic representation of streams which introduces the
   ability to use mutation for efficiency when implementing
   algorithms. Still, our representation enjoys many of the benefits of
   purely functional streams, such as a functional API and fusion.
@@ -24,7 +24,7 @@ abstract: |
   remove duplicate loop variables, and how to keep buffers entirely
   in references.
 
-  Our measurements show that our new monadic representation
+  Our measurements show that the new monadic representation
   consistently outperforms the functional representation by at least
   a factor of four when evaluated in the context of the Feldspar
   embedded DSL.
