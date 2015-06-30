@@ -507,7 +507,7 @@ examples:
 data Stream a = Stream (M (M a))
 ~~~
 
-The Feldspar implementation of a simple function like `map` is identical to the Haskell definition in this paper. For more complicated functions, the difference is mainly in the use of different types and different names for similar functions. For example, `cycle` is defined as follows in Feldspar:
+The Feldspar implementation of a simple function like `map` is identical to the Haskell definition in this paper. For more complicated functions, the difference is mainly in the use of different types and different names for similar functions. For example, the Feldspar implementation of `cycle` is:
 
 ~~~ {.haskell}
 cycle :: Syntax a => Pull DIM1 a -> Stream a
