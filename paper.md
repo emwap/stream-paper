@@ -617,7 +617,7 @@ and that much of the overhead due to high-level data types like `Stream` is redu
       ylabel=s,
       every axis x label/.style={at={(1,-0.09)},anchor=north east},
       every axis y label/.style={at={(-0.1,0.65)},anchor=east},
-      legend entries={\scriptsize{Pure},\scriptsize{C reference},\scriptsize{Monadic},\scriptsize{Monadic 2}},
+      legend entries={\scriptsize{Pure},\scriptsize{C reference},\scriptsize{Monadic Refernce},\scriptsize{Monadic Buffer}},
       legend style={at={(0.03,0.93)},anchor=north west},
       cycle list={blue,mark=*\\%
                   red,mark=square*\\%
@@ -670,15 +670,19 @@ least $4\times$ faster than the functional representation.
 
 The FIR filter benchmark is presented in Figure
 \ref{fig:measurements-fir}. The "Pure" points again show the
-performance of purely functional stream. "Monadic" shows monadic
-streams where the buffer is stored in references.
-The monadic stream representation is superior up to filter orders around 50.
-Apart from the Feldspar version, we also have a handwritten C
-benchmark to get a baseline for our measurements.  However, it is not
-entirely an apples-to-apples comparison since the C implementation
-still stores the buffer in memory and uses loops to traverse it. Yet,
-the measurements give some indication of how performant our
-implementation is. For filter orders below 20 it pays off to unroll the loops and store the buffer in references.
+performance of purely functional stream. "Monadic reference" shows
+monadic streams where the buffer is stored in references. The monadic
+stream representation is superior up to filter orders around 50.
+Apart from the Feldspar versions, we also have a handwritten C
+benchmark to get a baseline for our measurements. The C code uses a
+variation on a cyclic buffer, by splitting the buffer and the filter
+coefficients in two which avoids the cost of modulus operations.  We
+have also made a Feldspar implementation of this algorithm which is
+shown as "Monadic Buffer". The C and Feldspar implementations perform
+virtually identically. The "Monadic reference" implementation is the
+fastest for filter orders below 20, suggesting that it is fast as long
+as there are enough registers to hold the buffer. Above that
+threshold, the "Monadic Buffer" algorithm is clearly superior
 
 # Relation to Functional Streams
 
