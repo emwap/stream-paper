@@ -767,7 +767,7 @@ The stream fusion framework [@coutts2007stream] builds on the following coiterat
 data Stream a = forall s . Stream (s -> Step a s) s
 ~~~
 
-The difference to our initial representation is the `Step` type that is returned by the step action. The `Step` type has three cases: (1) a pair of an element `a` and a new state `s`, or (2) just a new state, or (3) a value signaling that the stream has ended. This stream representation makes it possible to give efficient definitions of many stream operations and make sure that streams are fused when operations are composed. The stream fusion framework uses GHC rewrite rules to convert list-based code to stream-based code where possible.
+The difference to our initial representation is the `Step` type that is returned by the step action. The `Step` type has three cases: (1) a pair of an element `a` and a new state `s`, or (2) just a new state, or (3) a value signaling that the stream has ended. This stream representation makes it possible to give efficient definitions of many stream operations and ensure that streams are fused when operations are composed. The stream fusion framework uses GHC rewrite rules to convert list-based code to stream-based code where possible.
 
 In contrast to our work, stream fusion does not support streams with mutable state.
 
