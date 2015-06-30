@@ -66,8 +66,8 @@ functional stream representation. Our contributions are:
 * We show how to optimize the representation to eliminate duplicate
   loop variables.
 
-* We show how our new stream representation can be used in EDSLs.
-  It is currently used in the Feldspar language.
+* We show how our new stream representation can be used in EDSLs;
+  it is currently used in the Feldspar language.
 
 * We demonstrate a performance advantage of a factor of four compared
   to the functional representation when using our monadic
