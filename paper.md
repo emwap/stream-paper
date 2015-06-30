@@ -16,7 +16,7 @@ abstract: |
   be efficiently implemented using purely functional techniques,
   due to excessive copying of data.
 
-  We present a monadic representation of stream which introduces the
+  We present a monadic representation of streams which introduces the
   ability to use mutation for efficiency when implementing
   algorithms. Still, our representation enjoys many of the benefits of
   purely functional streams, such as a functional API and fusion.
@@ -24,10 +24,10 @@ abstract: |
   remove duplicate loop variables, and how to keep buffers entirely
   in references.
 
-  The representation has been evaluated in the context of the Feldspar
-  embedded DSL, and our measurements show that our new monadic representation
+  Our measurements show that the new monadic representation
   consistently outperforms the functional representation by at least
-  a factor of four.
+  a factor of four when evaluated in the context of the Feldspar
+  embedded DSL.
 ---
 
 # Introduction
@@ -41,13 +41,13 @@ data Stream a = forall s . Stream (s -> (a,s)) s
 ~~~
 
 The representation is expressive and can be compiled into efficient
-code by means of fusion.
+code by means of fusion [@Caspi19981].
 
 Consider computing a simple moving average over a stream using the
 above representation. The implementation would keep track of the most
 recent values from the stream with a sliding window. Computing a new
 result involves inserting a new value at the front of the window
-and removing an element from the back. The typical functional
+and removing an element from the back of the window. The typical functional
 implementation of a sliding window requires the whole history except
 the last element to be copied to avoid aliasing problems. Copying the
 history is safe and conceptually simple but performance suffers. Even
@@ -120,12 +120,12 @@ purposes.]
 ~~~ {.C .numberLines}
   for (uint32_t v47 = 0; v47 < 32; v47 += 1)
   {
-    //Code for computing the average of the window elided
+    // Code for computing the average of the window elided
     for (uint32_t v89 = 0; v89 < v184; v89 += 1)
     {
       ((v46).member2).member2[(v63 + 1)] = ((v48).member2).member2[v63];
     }
-    //Code updating the struct which holds the window elided
+    // Code for updating the struct which holds the window elided
   }
 ~~~
 
@@ -143,9 +143,9 @@ enable mutation.
 data Stream a = Stream (IO (IO a))
 ~~~
 
-It is straightforward to parameterize this representation on the
-particular choice of monad. We use the `IO` monad here for the sake of
-concreteness.
+We use the `IO` monad for the sake of concreteness but it is
+straightforward to parameterize this representation on the particular
+choice of monad.
 
 Why does the representation have two levels of monads? The key to
 understanding this representation is that the outer monadic
@@ -168,9 +168,9 @@ map f (Stream init) = Stream $ do
     return (f a)
 ~~~
 
-The new stream is initialized by running the initialization
-computation from the input stream, yielding the step function `next`.
-Then, in the new step function, the function `next` is run to produce
+The output stream is initialized by running the initialization
+computation from the input stream, yielding the step action `next`.
+Then, in the new step action, the `next` is run to produce
 an element `a` which is transformed by the function `f` and then
 returned. The combinator `loop` is defined as `return`. We use the
 name `loop` to convey that the code returned by `loop` is executed an
@@ -208,7 +208,7 @@ remember len (Stream init) = do
 
 The code starts by allocating a mutable array of the appropriate
 size, followed by an initialization of the array. The initialization
-produces the `next` function which is used in the loop body to produce
+produces the `next` action which is used in the loop body to produce
 new elements in the stream which are successively stored in the array.
 When the loop is done, the mutable array is frozen, returning an
 immutable array as the final result.
@@ -245,7 +245,7 @@ putBuf     :: Buffer a -> a -> IO ()
 withBuf    :: Buffer a -> (Array Int a -> b) -> IO b
 ~~~
 
-The function `initBuffer` creates a new buffer, `putBuf` adds a new
+The function `initBuffer` creates a new buffer, and `putBuf` adds a new
 element while discarding the oldest element. The programmer can get an
 immutable view of the current contents of the buffer in a local scope
 by using `withBuf`. The function `withBuf` can be implemented without
@@ -253,7 +253,7 @@ copying but program correctness relies on the programmer to ensure
 that the provided function does not return the whole array.
 
 Returning to the function `recurrence`; the input stream stream is
-initialized as is the cyclic buffer. For each element in the output
+initialized, as is the cyclic buffer. For each element in the output
 stream an element from the input stream is computed and stored in the
 cyclic buffer. The content of the cyclic buffer is processed by
 a function provided by the caller of `recurrence` and the result is
@@ -263,11 +263,11 @@ input stream.
 
 The function `movingAvg` uses `recurrence` to provide sliding windows
 of the input stream and passes a function to compute the average of a
-window. The initial window only contains zeros. In the generated code
-from the corresponding Feldspar implementation, line 7 shows the
-window update performed through mutation (the window is stored in
-`v7`) : ^[We have removed some variable-to-variable assignments in the
-code to make it more readable.]
+window. The initial window only contains zeros. The generated code
+from the corresponding Feldspar implementation shows the window `v7`
+updated through mutation in line 7: ^[We removed some
+variable-to-variable assignments to make the code more readable.]
+
 
 ~~~ {.C .numberLines}
   v14 = 0;
@@ -349,11 +349,11 @@ map f (map g (Stream init))
 
 => { inlining map }
 
-map f (Stream $ do
+map f ( Stream $ do
   next <- init
   loop $ do
     a <- next
-    return (f a)
+    return (f a) )
 
 => { inlining map }
 
@@ -406,19 +406,19 @@ Stream $ do
     return (f (g a))
 ~~~
 
-The final result is as efficient as one can possibly hope for.
-
-Fusing combinators other than `map` follows a similar pattern.
+The result does not create an intermediate stream which is as
+efficient as one can hope for. Fusing combinators other than `map`
+follows a similar pattern.
 
 # Avoiding Multiple Loop Variables
 
-The stream representation already presented allows for mutation which
-improves efficiency of the generated code considerably. The generated
+The stream representation already presented allows for mutation, which
+can improve efficiency of the generated code considerably. The generated
 code still suffers from a problem where fused functions will cause
 multiple loop indices to appear in the same loop. An extra loop
-counter might be tolerable but the issue runs deeper than that and
-Lippmeier et al. report having seen eight loop counters appear in the
-wild [@lippmeier2013data]. Consider the following pattern:
+counter might be tolerable but the issue runs deeper than that:
+@lippmeier2013data report having seen eight loop counters appear in the
+wild. Consider the following pattern:
 
 ~~~ {.haskell}
 foo arr = remember n $ .. $ cycle arr
@@ -450,8 +450,8 @@ data Stream a = Stream (IO (Int -> IO a))
 ~~~
 
 The function performing allocation is responsible for providing the
-loop index. Here is the new version of `remember` for the new
-representation:
+loop index. Our previous example `remember` performs allocation so it
+has to be updated for the new representation:
 
 ~~~ {.haskell}
 remember :: Int -> Stream a -> IO (Array Int a)
@@ -465,9 +465,8 @@ remember len (Stream init) = do
 ~~~
 
 The key difference from the previous version is that the loop variable
-`i` is fed to the step function `next`. Functions like `cycle` can now
-take advantage of the provided loop index, and don't need to create
-their own loop variables:
+`i` is fed to the step action `next`. This allows functions like
+`cycle` to immediately use the provided loop variable:
 
 ~~~ {.haskell}
 cycle :: Array Int a -> Stream a
@@ -477,8 +476,9 @@ cycle arr = Stream $ do
     return (arr!(i `mod` l))
 ~~~
 
-The new code for `cycle` is considerably shorter and will also
-generate better code:
+The new code for `cycle` is both shorter and will generate better
+code. The code generated for `foo` with the improved stream
+representation is:
 
 ~~~ {.C}
 for (uint32_t v3 = 0; v3 < v0; v3 += 1) {
@@ -499,13 +499,15 @@ rewriting explained in the [Fusion] section happens automatically, no
 extra code needs to be written in order to achieve the optimization.
 
 Feldspar [@FeldsparIFL2010] has a stream library that uses a monadic
-embedding. Instead of the `IO` monad, it uses Feldspar's `M` monad [@genericmonads11] for mutable effects:
+embedding. The library uses Feldspar's `M` monad [@genericmonads11]
+for mutable effects instead of the `IO` monad used in the previous
+examples:
 
 ~~~ {.haskell}
 data Stream a = Stream (M (M a))
 ~~~
 
-The Feldspar implementation of a simple function like `map` is identical to the Haskell definition in this paper. For more complicated functions, the difference is mainly in the use of different types and different names for similar functions. For example, `cycle` is defined as follows in Feldspar:
+The Feldspar implementation of a simple function like `map` is identical to the Haskell definition in this paper. For more complicated functions, the difference is mainly in the use of different types and different names for similar functions. For example, the Feldspar implementation of `cycle` is:
 
 ~~~ {.haskell}
 cycle :: Syntax a => Pull DIM1 a -> Stream a
@@ -517,19 +519,18 @@ cycle vec = Stream $ do
     return (vec ! (Z :. i))
 ~~~
 
-A notable difference is the `Syntax` constraint on the type of the elements in the Feldspar implementation. This constraint is to restrict the function to elements that can be stored in memory when generating C code.
+A notable difference is the `Syntax` constraint on the type of the elements in the Feldspar implementation. The constraint ensures that elements can be stored in memory when generating C code.
 
 Using the monadic stream representation with EDSLs enables another
 trick not available with the functional representation: the buffer can
-be stored entirely in references. In the versions of the moving average
-function we've presented so far the purely functional representation
-uses an immutable array as a buffer while the monadic representation
-uses a mutable cyclic buffer. However, in an EDSL the buffer can be
-represented as a Haskell list of mutable references, provided that the
-EDSL has support for references. Since the buffer is implemented as a
-Haskell list, the list will be traversed at EDSL compile time and not
-be present in the generated code. Below is a Feldspar version
-of the `recurrence` function which stores the buffer in references.
+be stored entirely in references. The moving average for the purely
+functional stream representation uses an immutable array as a buffer
+while the monadic representation uses a mutable cyclic
+buffer. However, the buffer can be represented as a Haskell list of
+mutable references provided that the EDSL supports references. The
+list will be traversed at EDSL compile time and not be present in the
+generated code. Below is a Feldspar version of the `recurrence`
+function which stores the buffer in references.
 
 ~~~ {.haskell}
 recurrenceS :: (Type a, Type b) =>
@@ -653,7 +654,7 @@ streams using a cyclic buffer. Filter orders up to five are typical in
 digital signal processing applications but we tested the different
 implementations with a wide variety of buffer sizes to see the
 scalability of our technique.  The monadic buffer version is slightly
-better for small buffer sizes but worse for large window sizes.  The
+better for small buffer sizes but worse for large sizes.  The
 reason is that the cyclic buffer implementation uses the modulus
 operation frequently to ensure that the buffer is presented to the
 programmer with elements in the right order and not shifted. The
@@ -698,7 +699,7 @@ parameter to our monadic representation:
 data Stream a = Stream (IO (IO a)) Int
 ~~~
 
-Most function definitions for finite stream are similar to those for
+Most function definitions for finite streams are similar to those for
 infinite streams, with the addition of passing around the length
 parameter. Additionally, functions like appending two streams now make
 sense, and it is possible to allocate the whole stream to memory.
@@ -767,7 +768,7 @@ The stream fusion framework [@coutts2007stream] builds on the following coiterat
 data Stream a = forall s . Stream (s -> Step a s) s
 ~~~
 
-The difference to our initial representation is the `Step` type that is returned by the step function. The `Step` type has three cases: (1) a pair of an element `a` and a new state `s`, or (2) just a new state, or (3) a value signaling that the stream has ended. This stream representation makes it possible to give efficient definitions of many stream operations and make sure that streams are fused when operations are composed. The stream fusion framework uses GHC rewrite rules to convert list-based code to stream-based code where possible.
+The difference to our initial representation is the `Step` type that is returned by the step action. The `Step` type has three cases: (1) a pair of an element `a` and a new state `s`, or (2) just a new state, or (3) a value signaling that the stream has ended. This stream representation makes it possible to give efficient definitions of many stream operations and make sure that streams are fused when operations are composed. The stream fusion framework uses GHC rewrite rules to convert list-based code to stream-based code where possible.
 
 In contrast to our work, stream fusion does not support streams with mutable state.
 
@@ -788,7 +789,7 @@ The fusion framework in Conduits relies on GHC rules to rewrite recursive stream
 data Stream m o r = forall s . Stream (s -> m (Step s o r)) (m s)
 ~~~
 
-This type is quite close to our `Stream` representation: the initialization action of type `m s` can be used to initialize mutable state, and the step function can be used to mutate this state. The main difference is that there is still immutable state of type `s` passed around, which is unnecessary if we put all the state in the monad.
+This type is quite close to our `Stream` representation: the initialization action of type `m s` can be used to initialize mutable state, and the step action can be used to mutate this state. The main difference is that there is still immutable state of type `s` passed around, which is unnecessary if we put all the state in the monad.
 
 \paragraph{\bf FRP}
 
