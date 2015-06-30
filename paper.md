@@ -704,7 +704,7 @@ parameter to our monadic representation:
 data Stream a = Stream (IO (IO a)) Int
 ~~~
 
-Most function definitions for finite stream are similar to those for
+Most function definitions for finite streams are similar to those for
 infinite streams, with the addition of passing around the length
 parameter. Additionally, functions like appending two streams now make
 sense, and it is possible to allocate the whole stream to memory.
