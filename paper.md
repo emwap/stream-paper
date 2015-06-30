@@ -170,7 +170,7 @@ map f (Stream init) = Stream $ do
 
 The new stream is initialized by running the initialization
 computation from the input stream, yielding the step action `next`.
-Then, in the new step action, the function `next` is run to produce
+Then, in the new step action, the `next` is run to produce
 an element `a` which is transformed by the function `f` and then
 returned. The combinator `loop` is defined as `return`. We use the
 name `loop` to convey that the code returned by `loop` is executed an
@@ -208,7 +208,7 @@ remember len (Stream init) = do
 
 The code starts by allocating a mutable array of the appropriate
 size, followed by an initialization of the array. The initialization
-produces the `next` function which is used in the loop body to produce
+produces the `next` action which is used in the loop body to produce
 new elements in the stream which are successively stored in the array.
 When the loop is done, the mutable array is frozen, returning an
 immutable array as the final result.
