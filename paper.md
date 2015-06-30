@@ -266,8 +266,9 @@ of the input stream and passes a function to compute the average of a
 window. The initial window only contains zeros. In the generated code
 from the corresponding Feldspar implementation, line 7 shows the
 window update performed through mutation (the window is stored in
-`v7`): ^[We have removed some variable-to-variable assignments in the
-code to make it more readable.]
+`v7`): ^[We removed some variable-to-variable assignments to make the
+code more readable.]
+
 
 ~~~ {.C .numberLines}
   v14 = 0;
