@@ -809,12 +809,12 @@ The stream representation in this paper is used by the stream library in the Fel
 
 # Conclusions
 
-This paper presents a new monadic stream representation. It is
+This paper presents a new monadic stream representation. The representation is
 motivated by algorithms in digital signal processing which require
 mutation to be implemented efficiently. Somewhat surprisingly, our
 measurements show that a straight-forward mutable implementation using
-a cyclic buffer is often slower than a purely functional copying
-implementation. However, the monadic representation enables a much
+a cyclic buffer is often slower than a copying purely functional
+implementation. However, the monadic representation enables a
 more important optimization: keeping the buffer in references and
 unrolling the loop. For typical filter orders this implementation
 beats a handwritten C implementation, although performance degrades
