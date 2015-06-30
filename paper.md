@@ -654,7 +654,7 @@ streams using a cyclic buffer. Filter orders up to five are typical in
 digital signal processing applications but we tested the different
 implementations with a wide variety of buffer sizes to see the
 scalability of our technique.  The monadic buffer version is slightly
-better for small buffer sizes but worse for large window sizes.  The
+better for small buffer sizes but worse for large sizes.  The
 reason is that the cyclic buffer implementation uses the modulus
 operation frequently to ensure that the buffer is presented to the
 programmer with elements in the right order and not shifted. The
