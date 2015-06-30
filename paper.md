@@ -553,16 +553,15 @@ recurrenceS ii (Stream init) mkExpr = Stream $ do
     wBuf rs f = mapM getRef rs >>= f
 ~~~
 
-Without going into all details about how Feldspar is embedded, we
-focus on the use of references. The variable `ris` is bound to a list
-of references which are initialized by `mapM newRef ii`. The function
+We focus on the use of references without going into all details about
+how Feldspar is embedded. The variable `ris` is bound to a list of
+references which are initialized by `mapM newRef ii`. The function
 `wBuf` is used to read from all references and pass the resulting list
-of values to a continuation. It is used similarly to `withBuf` in the
-cyclic buffer implementation. The workhorse in this implementation is
-`pBuf` which conceptually rotates the buffer one step and adds the
-latest element. It is achieved by shifting the values between
-references. This version is fast as we will see in the [Evaluation]
-section below.
+of values to a continuation which resembles `withBuf` in the cyclic
+buffer implementation. The workhorse is `pBuf` which conceptually
+rotates the buffer one step and adds the latest element. The rotation
+is achieved by shifting the values between references. This version is
+fast as we will see in the [Evaluation] section below.
 
 
 # Evaluation
