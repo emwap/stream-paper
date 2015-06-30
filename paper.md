@@ -523,15 +523,14 @@ A notable difference is the `Syntax` constraint on the type of the elements in t
 
 Using the monadic stream representation with EDSLs enables another
 trick not available with the functional representation: the buffer can
-be stored entirely in references. In the versions of the moving average
-function we've presented so far the purely functional representation
-uses an immutable array as a buffer while the monadic representation
-uses a mutable cyclic buffer. However, in an EDSL the buffer can be
-represented as a Haskell list of mutable references, provided that the
-EDSL has support for references. Since the buffer is implemented as a
-Haskell list, the list will be traversed at EDSL compile time and not
-be present in the generated code. Below is a Feldspar version
-of the `recurrence` function which stores the buffer in references.
+be stored entirely in references. The moving average for the purely
+functional stream representation uses an immutable array as a buffer
+while the monadic representation uses a mutable cyclic
+buffer. However, the buffer can be represented as a Haskell list of
+mutable references provided that the EDSL supports references. The
+list will be traversed at EDSL compile time and not be present in the
+generated code. Below is a Feldspar version of the `recurrence`
+function which stores the buffer in references.
 
 ~~~ {.haskell}
 recurrenceS :: (Type a, Type b) =>
