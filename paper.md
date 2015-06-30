@@ -701,7 +701,7 @@ data Stream a = Stream (IO (IO a)) Int
 Most function definitions for finite streams are similar to those for
 infinite streams, with the addition of passing around the length
 parameter. Additionally, functions like appending two streams now make
-sense, and it is possible to allocate the whole stream to memory.
+sense, and the whole stream can be allocated to memory.
 
 # A Pure Interface
 
