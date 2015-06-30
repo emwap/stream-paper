@@ -47,7 +47,7 @@ Consider computing a simple moving average over a stream using the
 above representation. The implementation would keep track of the most
 recent values from the stream with a sliding window. Computing a new
 result involves inserting a new value at the front of the window
-and removing an element from the back. The typical functional
+and removing an element from the back of the window. The typical functional
 implementation of a sliding window requires the whole history except
 the last element to be copied to avoid aliasing problems. Copying the
 history is safe and conceptually simple but performance suffers. Even
