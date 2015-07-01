@@ -617,7 +617,7 @@ and that much of the overhead due to high-level data types like `Stream` is redu
       ylabel=s,
       every axis x label/.style={at={(1,-0.09)},anchor=north east},
       every axis y label/.style={at={(-0.1,0.65)},anchor=east},
-      legend entries={\scriptsize{Pure},\scriptsize{C reference},\scriptsize{Monadic Reference},\scriptsize{Monadic Buffer}},
+      legend entries={\scriptsize{Pure},\scriptsize{C Reference},\scriptsize{Monadic Reference},\scriptsize{Monadic Buffer}},
       legend style={at={(0.03,0.93)},anchor=north west},
       cycle list={blue,mark=*\\%
                   red,mark=square*\\%
