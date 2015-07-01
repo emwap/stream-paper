@@ -291,9 +291,9 @@ fir b inp = recurrence (listArray (0,l-1) (replicate l 0)) inp
   where l = rangeSize (bounds b)
 ~~~
 
-Implementing IIR filters requires a
-version of `recurrence` which also has a cyclic buffer for the
-elements of the output stream.
+IIR filters can be implemented by using a version of recurrence which
+uses two cyclic buffers, one buffer for the input elements and the
+other buffer for the output elements.
 
 # Fusion
 
