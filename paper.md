@@ -646,7 +646,7 @@ all our benchmarks, though the simpler representation is just as fast
 for these benchmarks due to the C compiler being clever enough.
 The measurements have been performed on a Linux desktop, equipped with
 a 3.5 GHz Intel Core i7-3770K and 16 GB 1600 MHz DDR3. The C compiler
-used to compile all benchmarks is gcc 4.6.3. One core is used
+used to compile all benchmarks is gcc 4.6.3 using the `-O3` flag. One core is used
 throughout all benchmarks. Times are measured using the criterion
 package.
 
