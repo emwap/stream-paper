@@ -66,8 +66,8 @@ functional stream representation. Our contributions are:
 * We show how to optimize the representation to eliminate duplicate
   loop variables.
 
-* We show how our new stream representation can be used in EDSLs.
-  It is currently used in the Feldspar language.
+* We show how our new stream representation can be used in EDSLs;
+  it is currently used in the Feldspar language.
 
 * We demonstrate a performance advantage of a factor of four compared
   to the functional representation when using our monadic
@@ -114,8 +114,8 @@ window sizes.
 We see the problem clearly in the generated C code from the
 corresponding Feldspar implementation. The window is stored in
 `v46.member2.member2` and the for-loop on lines 4 to 7 performs the
-copying. ^[We have elided most of the generated code for presentation
-purposes.]
+copying. We have elided most of the generated code for presentation
+purposes.
 
 ~~~ {.C .numberLines}
   for (uint32_t v47 = 0; v47 < 32; v47 += 1)
@@ -553,16 +553,15 @@ recurrenceS ii (Stream init) mkExpr = Stream $ do
     wBuf rs f = mapM getRef rs >>= f
 ~~~
 
-Without going into all details about how Feldspar is embedded, we
-focus on the use of references. The variable `ris` is bound to a list
-of references which are initialized by `mapM newRef ii`. The function
+We focus on the use of references without going into all details about
+how Feldspar is embedded. The variable `ris` is bound to a list of
+references which are initialized by `mapM newRef ii`. The function
 `wBuf` is used to read from all references and pass the resulting list
-of values to a continuation. It is used similarly to `withBuf` in the
-cyclic buffer implementation. The workhorse in this implementation is
-`pBuf` which conceptually rotates the buffer one step and adds the
-latest element. It is achieved by shifting the values between
-references. This version is fast as we will see in the [Evaluation]
-section below.
+of values to a continuation which resembles `withBuf` in the cyclic
+buffer implementation. The workhorse is `pBuf` which conceptually
+rotates the buffer one step and adds the latest element. The rotation
+is achieved by shifting the values between references. This version is
+fast as we will see in the [Evaluation] section below.
 
 
 # Evaluation
@@ -586,11 +585,11 @@ and that much of the overhead due to high-level data types like `Stream` is redu
       ylabel=s,
       every axis x label/.style={at={(1,-0.09)},anchor=north east},
       every axis y label/.style={at={(-0.1,0.65)},anchor=east},
-      legend entries={\scriptsize{Pure},\scriptsize{Monadic Buffer},\scriptsize{Monadic Reference}},
+      legend entries={\scriptsize{Pure},\scriptsize{Monadic Buffer},\scriptsize{Monadic Unrolled}},
       legend style={at={(0.03,0.93)},anchor=north west},
-      cycle list={blue,mark=*\\%
-                  red,mark=square*\\%
-                  brown,mark=+\\%
+      cycle list={red,mark=*\\%
+                  black,mark=square*\\%
+                  blue,mark=+\\%
                  }
     ]
 %    \addplot shell[prefix=pgfshell_,id=avg_ref]
@@ -613,17 +612,17 @@ and that much of the overhead due to high-level data types like `Stream` is redu
       height=0.6\textwidth,
       width=0.8\textwidth,
       title=FIR filter,
-      title style={at={(0.5,0.94)},anchor=south},
+      title style={at={(0.5,0.95)},anchor=south},
       xlabel=\scriptsize{filter order},
       ylabel=s,
       every axis x label/.style={at={(1,-0.09)},anchor=north east},
       every axis y label/.style={at={(-0.1,0.65)},anchor=east},
-      legend entries={\scriptsize{Pure},\scriptsize{C reference},\scriptsize{Monadic},\scriptsize{Monadic 2}},
+      legend entries={\scriptsize{Pure},\scriptsize{C Reference},\scriptsize{Monadic Unrolled},\scriptsize{Monadic Buffer Opt.}},
       legend style={at={(0.03,0.93)},anchor=north west},
-      cycle list={blue,mark=*\\%
-                  red,mark=square*\\%
-                  brown,mark=+\\%
-                  black,mark=*\\%
+      cycle list={red,mark=*\\%
+                  black,mark=square*\\%
+                  blue,mark=+\\%
+                  brown,mark=x\\%
                  }
     ]
     \addplot shell[prefix=pgfshell_,id=pure]
@@ -631,9 +630,9 @@ and that much of the overhead due to high-level data types like `Stream` is redu
     \addplot shell[prefix=pgfshell_,id=ref]
         { awk -F'/|,' '/c_fir_ref/ { print $2,$5 }' benchmark/benchmark.csv};
     \addplot shell[prefix=pgfshell_,id=monadic]
-        { awk -F'/|,' '/c_fir2_bench/ { print $2,$5 }' benchmark/benchmark.csv};
+        { awk -F'/|,' '/c_firI2_bench/ { print $2,$5 }' benchmark/benchmark.csv};
     \addplot shell[prefix=pgfshell_,id=monadic3]
-        { awk -F'/|,' '/c_fir3_bench/ { print $2,$5 }' benchmark/benchmark.csv};
+        { awk -F'/|,' '/c_firI3_bench/ { print $2,$5 }' benchmark/benchmark.csv};
  \end{axis}
 \end{tikzpicture}
 \caption{Running time of filters compared to reference C implementations.}
@@ -641,10 +640,15 @@ and that much of the overhead due to high-level data types like `Stream` is redu
 \end{figure}
 
 We have measured the difference between functional and monadic streams
-on two different benchmarks: moving average and FIR filter. The
-measurements have been performed on a Linux desktop, equipped with a 3.5
-GHz Intel Core i7-3770K and 16 GB 1600 MHz DDR3. One core is used
-throughout all benchmarks.
+on two different benchmarks: moving average and FIR filter. We have
+used the stream representation which avoids multiple loop variables in
+all our benchmarks, though the simpler representation is just as fast
+for these benchmarks due to the C compiler being clever enough.
+The measurements have been performed on a Linux desktop, equipped with
+a 3.5 GHz Intel Core i7-3770K and 16 GB 1600 MHz DDR3. The C compiler
+used to compile all benchmarks is gcc 4.6.3. One core is used
+throughout all benchmarks. Times are measured using the criterion
+package.
 
 The results for the moving average is shown in Figure
 \ref{fig:measurements-mov-avg}. The points labeled "Pure" show the
@@ -666,15 +670,19 @@ least $4\times$ faster than the functional representation.
 
 The FIR filter benchmark is presented in Figure
 \ref{fig:measurements-fir}. The "Pure" points again show the
-performance of purely functional stream. "Monadic" shows monadic
-streams where the buffer is stored in references.
-The monadic stream representation is superior up to filter orders around 50.
-Apart from the Feldspar version, we also have a handwritten C
-benchmark to get a baseline for our measurements.  However, it is not
-entirely an apples-to-apples comparison since the C implementation
-still stores the buffer in memory and uses loops to traverse it. Yet,
-the measurements give some indication of how performant our
-implementation is. For filter orders below 20 it pays off to unroll the loops and store the buffer in references.
+performance of purely functional stream. "Monadic Unrolled" shows
+monadic streams where the buffer is stored in references. The monadic
+stream representation is superior up to filter orders around 50.
+Apart from the Feldspar versions, we also have a handwritten C
+benchmark to get a baseline for our measurements. The C code uses a
+variation on a cyclic buffer, by splitting the buffer and the filter
+coefficients in two which avoids the cost of modulus operations.  We
+have also made a Feldspar implementation of this algorithm which is
+shown as "Monadic Buffer Opt.". The C and Feldspar implementations perform
+virtually identically. The "Monadic Unrolled" implementation is the
+fastest for filter orders below 20, suggesting that it is fast as long
+as there are enough registers to hold the buffer. Above that
+threshold, the "Monadic Buffer Opt." algorithm is clearly superior
 
 # Relation to Functional Streams
 
@@ -702,7 +710,7 @@ data Stream a = Stream (IO (IO a)) Int
 Most function definitions for finite streams are similar to those for
 infinite streams, with the addition of passing around the length
 parameter. Additionally, functions like appending two streams now make
-sense, and it is possible to allocate the whole stream to memory.
+sense, and the whole stream can be allocated to memory.
 
 # A Pure Interface
 
@@ -730,7 +738,7 @@ remember' len (Stream init) = do
 
 [^remember]: The helper function `remember'` is needed to get the types right.
 
-The result is now a pure `Array` value rather than a monadic one. This means that we can hide all uses of monads from the user and provide a pure interface to streams. However, in order to make use of mutability, one has still to write monadic code (or use canned solutions, such as `recurrence`).
+The result is now a pure `Array` value rather than a monadic one. This means that we can hide all uses of monads from the user and provide a pure interface to streams. However, one has still to write monadic code or use canned solutions such as `recurrence` in order to make use of mutability.
 
 # Related Work
 
@@ -768,7 +776,7 @@ The stream fusion framework [@coutts2007stream] builds on the following coiterat
 data Stream a = forall s . Stream (s -> Step a s) s
 ~~~
 
-The difference to our initial representation is the `Step` type that is returned by the step action. The `Step` type has three cases: (1) a pair of an element `a` and a new state `s`, or (2) just a new state, or (3) a value signaling that the stream has ended. This stream representation makes it possible to give efficient definitions of many stream operations and make sure that streams are fused when operations are composed. The stream fusion framework uses GHC rewrite rules to convert list-based code to stream-based code where possible.
+The difference to our initial representation is the `Step` type that is returned by the step action. The `Step` type has three cases: (1) a pair of an element `a` and a new state `s`, or (2) just a new state, or (3) a value signaling that the stream has ended. This stream representation makes it possible to give efficient definitions of many stream operations and ensure that streams are fused when operations are composed. The stream fusion framework uses GHC rewrite rules to convert list-based code to stream-based code where possible.
 
 In contrast to our work, stream fusion does not support streams with mutable state.
 
@@ -781,9 +789,9 @@ A suitable reference could be "Exploiting vector instructions with generalized s
 \paragraph{\bf Effectful stream programming}
 There are many Haskell libraries for dealing with streaming data, such as Fudgets [@carlsson1993fudgets], Conduit [@conduit-overview], Pipes [@pipes] and Iteratees [@kiselyov2012iteratees]. Most of these libraries define streams over an underlying monad. Choosing `IO` as the underlying monad allows for the streaming programs to perform external communication. However, there is nothing stopping from using the `IO` monad also for "internal" effects, such as mutable state.
 
-Stream representations such as the one in Conduits can describe more general networks than our `Stream` type (e.g. nodes with different input and output rates). However, being based on recursive definitions, those stream programs are generally not guaranteed to fuse. Though, when certain requirements are met, conduits are subject to fusion [@conduit-fusion].
+Stream representations such as the one in Conduits can describe more general networks than our `Stream` type, e.g. nodes with different input and output rates. However, those stream programs are generally not guaranteed to fuse since they are based on recursive definitions. Conduits are however subject to fusion [@conduit-fusion] when certain requirements are met.
 
-The fusion framework in Conduits relies on GHC rules to rewrite recursive stream programs to corresponding programs based on a non-recursive stream type (an extension of the stream fusion representation above):
+The fusion framework in Conduits relies on GHC rules to rewrite recursive stream programs to corresponding programs based on a non-recursive stream type which is an extension of the stream fusion representation above:
 
 ~~~ {.haskell}
 data Stream m o r = forall s . Stream (s -> m (Step s o r)) (m s)
@@ -806,16 +814,16 @@ Perhaps some of the techniques presented in this paper can be applied
 to speed up FRP implementations; such investigations are future work.
 
 \paragraph{\bf EDSLs}
-The stream representation in this paper is used by the stream library in the Feldspar EDSL [@FeldsparIFL2010]. It is also used as an intermediate representation in recent work on adding data flow networks on top of Feldspar [@aronsson2015stream].
+The stream representation in this paper is used by the stream library in the Feldspar EDSL [@FeldsparIFL2010]. The representation is also used as an intermediate representation in recent work on adding data flow networks on top of Feldspar [@aronsson2015stream].
 
 # Conclusions
 
-This paper presents a new monadic stream representation. It is
+This paper presents a new monadic stream representation. The representation is
 motivated by algorithms in digital signal processing which require
 mutation to be implemented efficiently. Somewhat surprisingly, our
 measurements show that a straight-forward mutable implementation using
-a cyclic buffer is often slower than a purely functional copying
-implementation. However, the monadic representation enables a much
+a cyclic buffer is often slower than a copying purely functional
+implementation. However, the monadic representation enables a
 more important optimization: keeping the buffer in references and
 unrolling the loop. For typical filter orders this implementation
 beats a handwritten C implementation, although performance degrades
