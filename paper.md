@@ -587,9 +587,9 @@ and that much of the overhead due to high-level data types like `Stream` is redu
       every axis y label/.style={at={(-0.1,0.65)},anchor=east},
       legend entries={\scriptsize{Pure},\scriptsize{Monadic Buffer},\scriptsize{Monadic Unrolled}},
       legend style={at={(0.03,0.93)},anchor=north west},
-      cycle list={blue,mark=*\\%
-                  red,mark=square*\\%
-                  brown,mark=+\\%
+      cycle list={red,mark=*\\%
+                  black,mark=square*\\%
+                  blue,mark=+\\%
                  }
     ]
 %    \addplot shell[prefix=pgfshell_,id=avg_ref]
@@ -619,10 +619,10 @@ and that much of the overhead due to high-level data types like `Stream` is redu
       every axis y label/.style={at={(-0.1,0.65)},anchor=east},
       legend entries={\scriptsize{Pure},\scriptsize{C Reference},\scriptsize{Monadic Unrolled},\scriptsize{Monadic Buffer Opt.}},
       legend style={at={(0.03,0.93)},anchor=north west},
-      cycle list={blue,mark=*\\%
-                  red,mark=square*\\%
-                  brown,mark=+\\%
-                  black,mark=*\\%
+      cycle list={red,mark=*\\%
+                  black,mark=square*\\%
+                  blue,mark=+\\%
+                  brown,mark=x\\%
                  }
     ]
     \addplot shell[prefix=pgfshell_,id=pure]
