@@ -73,7 +73,7 @@ functional stream representation. Our contributions are:
   to the functional representation when using our monadic
   representation in Feldspar.
 
-The new monadic formulation of streams is applicable to any language with a monad for mutable effects. We show an implementation in Haskell based on `IO` in section [Efficient Monadic Streams] as well as an implementation in the Feldspar EDSL [@FeldsparIFL2010] in the section [Streams for EDSLs]. The advantages of the new stream representation are easier to demonstrate in Feldspar because the generated C code makes excessive copying both easy to see and measure. We compromise by using the Haskell implementation for presentation purposes and the Feldspar implementation for the performance evaluation.
+The new monadic formulation of streams is applicable to any language with a monad for mutable effects. We show an implementation in Haskell based on `IO` in section [Efficient Monadic Streams] as well as an implementation in the Feldspar EDSL [@FeldsparIFL2010] in the section [Streams for EDSLs]. We present our ideas in regular Haskell code since most readers are already familiar with Haskell. We evaluate the performance of the new stream representation in Feldspar since the generated C code makes excessive copying both apparent and easy to measure.
 
 Most of the examples in the paper are available as Feldspar code in the Feldspar repository[^FeldsparCode]. The Feldspar code is conceptually similar to the Haskell code shown in this paper.
 
