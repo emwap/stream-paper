@@ -816,6 +816,33 @@ to speed up FRP implementations; such investigations are future work.
 \paragraph{\bf EDSLs}
 The stream representation in this paper is used by the stream library in the Feldspar EDSL [@FeldsparIFL2010]. The representation is also used as an intermediate representation in recent work on adding data flow networks on top of Feldspar [@aronsson2015stream].
 
+\paragraph{\bf Object Oriented Libraries}
+Some object oriented languages provide stream like interfaces which
+resembles our representation. For example, in the C# standard
+libraries there is an interface `IEnumerable`:
+
+~~~ {.java}
+interface IEnumerable<T> {
+    IEnumerator<T> GetEnumerator();
+}
+~~~
+
+An object implementing this interface can return an enumerator. It is
+similar to the outer monad in our representation. The `IEnumerator`
+corresponds to the inner monad, in that it can be called iteratively
+to produce new elements:
+
+~~~ {.java}
+interface IEnumerator<T> {
+    bool MoveNext();
+    T Current { get; }
+}
+~~~
+
+This interface is designed for finite streams, but if we were to
+remove the `MoveNext` method it would be very similar to our
+representation. 
+
 # Conclusions
 
 This paper presents a new monadic stream representation. The representation is
@@ -833,6 +860,9 @@ order.
 
 # Acknowledgements
 
-This research was funded by the Swedish Foundation for Strategic Research (in the RAWFP project) and the Swedish Research Council.
+This research was funded by the Swedish Foundation for Strategic
+Research (in the RAWFP project) and the Swedish Research
+Council. Thanks to Derek Elkins for pointing out the connection to
+object oriented languages.
 
 # References
